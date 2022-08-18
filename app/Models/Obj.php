@@ -10,4 +10,9 @@ class Obj extends Model
     use HasFactory;
 
     protected $table = 'objects';
+
+    public function locations()
+    {
+        return $this->hasMany(Location::class, 'object_id');
+    }
 }

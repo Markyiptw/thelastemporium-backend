@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ObjController;
+use App\Http\Controllers\ObjectLocationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +17,10 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::resource('objects', ObjController::class)->only([
+    'index',
+]);
+
+Route::resource('objects/{object}/locations', ObjectLocationController::class)->only([
     'index',
 ]);
 
