@@ -1,0 +1,79 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Media;
+use App\Models\Obj;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
+
+class ObjectMediaTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_user_can_upload_m4a_to_location()
+    {
+        $object = Obj::factory()->create();
+
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('foo.m4a', 0, 'audio/x-m4a'); // https://stackoverflow.com/questions/65796709/what-content-type-are-voice-memo-files-on-ios
+
+        $response = $this->post("/api/objects/{$object->id}/medias", [
+            'file' => $file,
+        ]);
+
+        $response->assertStatus(201);
+
+        $response->assertJson(
+            Media::first()->only([
+                'path',
+                'mime_type',
+                'id',
+            ])
+        );
+
+        Storage::disk('public')->assertExists($file->hashName());
+
+        $this->assertDatabaseHas('medias', [
+            'path' => $file->hashName(), // because stored in root of disk
+            'mime_type' => 'audio/x-m4a',
+            'object_id' => $object->id,
+        ]);
+
+    }
+
+    public function test_user_can_upload_jpg_to_location()
+    {
+        $object = Obj::factory()->create();
+
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->image('foo.jpg');
+
+        $response = $this->post("/api/objects/{$object->id}/medias", [
+            'file' => $file,
+        ]);
+
+        $response->assertStatus(201);
+
+        $response->assertJson(
+            Media::first()->only([
+                'path',
+                'mime_type',
+                'id',
+            ])
+        );
+
+        Storage::disk('public')->assertExists($file->hashName());
+
+        $this->assertDatabaseHas('medias', [
+            'path' => $file->hashName(), // because stored in root of disk
+            'mime_type' => 'image/jpeg',
+            'object_id' => $object->id,
+        ]);
+
+    }
+}

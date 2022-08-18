@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ObjController;
 use App\Http\Controllers\ObjectLocationController;
+use App\Http\Controllers\ObjectMediaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,10 @@ Route::resource('objects', ObjController::class)->only([
 
 Route::resource('objects/{object}/locations', ObjectLocationController::class)->only([
     'index',
+]);
+
+Route::resource('objects/{object}/medias', ObjectMediaController::class)->only([
+    'store',
 ]);
 
 Route::middleware('auth:sanctum')->group(function () {

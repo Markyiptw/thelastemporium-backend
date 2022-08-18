@@ -15,4 +15,9 @@ class Obj extends Model
     {
         return $this->hasMany(Location::class, 'object_id');
     }
+
+    public function medias()
+    {
+        return $this->hasMany(Media::class, 'object_id');
+    }
 }
