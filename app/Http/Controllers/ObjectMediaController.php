@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Resources\MediaResource;
 use App\Models\Obj;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ObjectMediaController extends Controller
 {
     public function store(Request $request, Obj $object)
     {
+        Gate::authorize('upload-media', $object);
+
         $fiveMbInKb = 5 * 1024;
 
         $request->validate([

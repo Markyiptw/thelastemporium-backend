@@ -20,4 +20,9 @@ class Obj extends Model
     {
         return $this->hasMany(Media::class, 'object_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -16,14 +16,16 @@ class ObjectMediaTest extends TestCase
 
     public function test_user_can_upload_m4a_to_location()
     {
-        $object = Obj::factory()->create();
+        $user = User::factory()->create();
+
+        $object = Obj::factory()->for($user)->create();
 
         Storage::fake('public');
 
         $file = UploadedFile::fake()->create('foo.m4a', 0, 'audio/x-m4a'); // https://stackoverflow.com/questions/65796709/what-content-type-are-voice-memo-files-on-ios
 
         $response = $this
-            ->actingAs(User::factory()->create())
+            ->actingAs($user)
             ->postJson("/api/objects/{$object->id}/medias", [
                 'file' => $file,
             ]);
@@ -49,14 +51,16 @@ class ObjectMediaTest extends TestCase
 
     public function test_user_can_upload_jpg_to_location()
     {
-        $object = Obj::factory()->create();
+        $user = User::factory()->create();
+
+        $object = Obj::factory()->for($user)->create();
 
         Storage::fake('public');
 
         $file = UploadedFile::fake()->image('foo.jpg');
 
         $response = $this
-            ->actingAs(User::factory()->create())
+            ->actingAs($user)
             ->postJson("/api/objects/{$object->id}/medias", [
                 'file' => $file,
             ]);
@@ -80,16 +84,18 @@ class ObjectMediaTest extends TestCase
         ]);
     }
 
-    public function test_cannot_upload_file_greater_than_5_mb()
+    public function test_user_cannot_upload_file_greater_than_5_mb()
     {
-        $object = Obj::factory()->create();
+        $user = User::factory()->create();
+
+        $object = Obj::factory()->for($user)->create();
 
         Storage::fake('public');
 
         $file = UploadedFile::fake()->create('', 5 * 1024 + 1);
 
         $response = $this
-            ->actingAs(User::factory()->create())
+            ->actingAs($user)
             ->postJson("/api/objects/{$object->id}/medias", [
                 'file' => $file,
             ]);
@@ -97,16 +103,18 @@ class ObjectMediaTest extends TestCase
         $response->assertInvalid(['file']);
     }
 
-    public function test_cannot_upload_file_that_is_not_image_or_audio()
+    public function test_user_cannot_upload_file_that_is_not_image_or_audio()
     {
-        $object = Obj::factory()->create();
+        $user = User::factory()->create();
+
+        $object = Obj::factory()->for($user)->create();
 
         Storage::fake('public');
 
         $file = UploadedFile::fake()->create('', 0, 'video/mp4');
 
         $response = $this
-            ->actingAs(User::factory()->create())
+            ->actingAs($user)
             ->postJson("/api/objects/{$object->id}/medias", [
                 'file' => $file,
             ]);
@@ -116,12 +124,14 @@ class ObjectMediaTest extends TestCase
 
     public function test_a_file_must_be_selected()
     {
-        $object = Obj::factory()->create();
+        $user = User::factory()->create();
+
+        $object = Obj::factory()->for($user)->create();
 
         Storage::fake('public');
 
         $response = $this
-            ->actingAs(User::factory()->create())
+            ->actingAs($user)
             ->postJson("/api/objects/{$object->id}/medias");
 
         $response->assertInvalid(['file']);
@@ -129,7 +139,7 @@ class ObjectMediaTest extends TestCase
 
     public function test_guest_cannot_upload_files()
     {
-        $object = Obj::factory()->create();
+        $object = Obj::factory()->for(User::factory())->create();
 
         Storage::fake('public');
 
@@ -140,6 +150,25 @@ class ObjectMediaTest extends TestCase
         ]);
 
         $response->assertUnauthorized();
+    }
+
+    public function test_user_cannot_upload_files_for_object_not_belongs_to_them()
+    {
+        $object = Obj::factory()
+            ->for(User::factory())
+            ->create();
+
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('foo.m4a', 0, 'audio/x-m4a');
+
+        $response = $this
+            ->actingAs(User::factory()->create())
+            ->postJson("/api/objects/{$object->id}/medias", [
+                'file' => $file,
+            ]);
+
+        $response->assertForbidden();
     }
 
 }
