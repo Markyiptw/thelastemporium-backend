@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Media;
 use App\Models\Obj;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -21,9 +22,11 @@ class ObjectMediaTest extends TestCase
 
         $file = UploadedFile::fake()->create('foo.m4a', 0, 'audio/x-m4a'); // https://stackoverflow.com/questions/65796709/what-content-type-are-voice-memo-files-on-ios
 
-        $response = $this->post("/api/objects/{$object->id}/medias", [
-            'file' => $file,
-        ]);
+        $response = $this
+            ->actingAs(User::factory()->create())
+            ->postJson("/api/objects/{$object->id}/medias", [
+                'file' => $file,
+            ]);
 
         $response->assertStatus(201);
 
@@ -42,7 +45,6 @@ class ObjectMediaTest extends TestCase
             'mime_type' => 'audio/x-m4a',
             'object_id' => $object->id,
         ]);
-
     }
 
     public function test_user_can_upload_jpg_to_location()
@@ -53,9 +55,11 @@ class ObjectMediaTest extends TestCase
 
         $file = UploadedFile::fake()->image('foo.jpg');
 
-        $response = $this->post("/api/objects/{$object->id}/medias", [
-            'file' => $file,
-        ]);
+        $response = $this
+            ->actingAs(User::factory()->create())
+            ->postJson("/api/objects/{$object->id}/medias", [
+                'file' => $file,
+            ]);
 
         $response->assertStatus(201);
 
@@ -84,9 +88,11 @@ class ObjectMediaTest extends TestCase
 
         $file = UploadedFile::fake()->create('', 5 * 1024 + 1);
 
-        $response = $this->postJson("/api/objects/{$object->id}/medias", [
-            'file' => $file,
-        ]);
+        $response = $this
+            ->actingAs(User::factory()->create())
+            ->postJson("/api/objects/{$object->id}/medias", [
+                'file' => $file,
+            ]);
 
         $response->assertInvalid(['file']);
     }
@@ -99,9 +105,11 @@ class ObjectMediaTest extends TestCase
 
         $file = UploadedFile::fake()->create('', 0, 'video/mp4');
 
-        $response = $this->postJson("/api/objects/{$object->id}/medias", [
-            'file' => $file,
-        ]);
+        $response = $this
+            ->actingAs(User::factory()->create())
+            ->postJson("/api/objects/{$object->id}/medias", [
+                'file' => $file,
+            ]);
 
         $response->assertInvalid(['file']);
     }
@@ -112,9 +120,26 @@ class ObjectMediaTest extends TestCase
 
         Storage::fake('public');
 
-        $response = $this->postJson("/api/objects/{$object->id}/medias");
+        $response = $this
+            ->actingAs(User::factory()->create())
+            ->postJson("/api/objects/{$object->id}/medias");
 
         $response->assertInvalid(['file']);
+    }
+
+    public function test_guest_cannot_upload_files()
+    {
+        $object = Obj::factory()->create();
+
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('foo.m4a', 0, 'audio/x-m4a');
+
+        $response = $this->postJson("/api/objects/{$object->id}/medias", [
+            'file' => $file,
+        ]);
+
+        $response->assertUnauthorized();
     }
 
 }

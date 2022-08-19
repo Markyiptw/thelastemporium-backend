@@ -25,12 +25,11 @@ Route::resource('objects/{object}/locations', ObjectLocationController::class)->
     'index',
 ]);
 
-Route::resource('objects/{object}/medias', ObjectMediaController::class)->only([
-    'store',
-]);
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+    Route::resource('objects/{object}/medias', ObjectMediaController::class)->only([
+        'store',
+    ]);
 });

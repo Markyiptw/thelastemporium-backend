@@ -16,7 +16,7 @@ class ObjectMediaController extends Controller
             'file' => [
                 "file",
                 "max:{$fiveMbInKb}",
-                "mimetypes:audio/x-m4a,image/jpeg,image/png",
+                "mimetypes:audio/x-m4a,image/jpeg,image/png", // https://stackoverflow.com/questions/71265563/how-to-show-spinner-while-safari-is-converting-heic-to-jpeg-via-input-type-file
                 "required",
             ],
         ]);
