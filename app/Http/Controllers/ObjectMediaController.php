@@ -13,7 +13,11 @@ class ObjectMediaController extends Controller
         $fiveMbInKb = 5 * 1024;
 
         $request->validate([
-            'file' => "file|max:{$fiveMbInKb}",
+            'file' => [
+                "file",
+                "max:{$fiveMbInKb}",
+                "mimetypes:audio/x-m4a,image/jpeg,image/png",
+            ],
         ]);
 
         $file = $request->file('file');

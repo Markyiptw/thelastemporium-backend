@@ -90,4 +90,20 @@ class ObjectMediaTest extends TestCase
 
         $response->assertInvalid(['file']);
     }
+
+    public function test_cannot_upload_file_that_is_not_image_or_audio()
+    {
+        $object = Obj::factory()->create();
+
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('', 0, 'video/mp4');
+
+        $response = $this->postJson("/api/objects/{$object->id}/medias", [
+            'file' => $file,
+        ]);
+
+        $response->assertInvalid(['file']);
+    }
+
 }
