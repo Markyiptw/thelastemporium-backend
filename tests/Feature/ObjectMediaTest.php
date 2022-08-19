@@ -106,4 +106,15 @@ class ObjectMediaTest extends TestCase
         $response->assertInvalid(['file']);
     }
 
+    public function test_a_file_must_be_selected()
+    {
+        $object = Obj::factory()->create();
+
+        Storage::fake('public');
+
+        $response = $this->postJson("/api/objects/{$object->id}/medias");
+
+        $response->assertInvalid(['file']);
+    }
+
 }

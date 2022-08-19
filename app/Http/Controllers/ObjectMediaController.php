@@ -17,6 +17,7 @@ class ObjectMediaController extends Controller
                 "file",
                 "max:{$fiveMbInKb}",
                 "mimetypes:audio/x-m4a,image/jpeg,image/png",
+                "required",
             ],
         ]);
 
