@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Admin;
 use App\Models\Obj;
-use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -27,8 +27,12 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::define('upload-media', function (User $user, Obj $object) {
-            return $user->id === $object->user_id;
+        Gate::define('upload-media', function ($user, Obj $object) {
+            if ($user->id === $object->user_id) {return true;};
+        });
+
+        Gate::after(function ($user, $ability) {
+            return $user instanceof Admin;
         });
     }
 }

@@ -29,6 +29,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+});
+
+Route::middleware('auth:sanctum,admin')->group(function () {
     Route::resource('objects/{object}/medias', ObjectMediaController::class)->only([
         'store',
     ]);

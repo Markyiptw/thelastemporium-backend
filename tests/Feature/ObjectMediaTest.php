@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Admin;
 use App\Models\Media;
 use App\Models\Obj;
 use App\Models\User;
@@ -169,6 +170,41 @@ class ObjectMediaTest extends TestCase
             ]);
 
         $response->assertForbidden();
+    }
+
+    public function test_admin_can_upload_media_to_any_location()
+    {
+        $object = Obj::factory()
+            ->for(User::factory())
+            ->create();
+
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('foo.m4a', 0, 'audio/x-m4a');
+
+        $response = $this
+            ->actingAs(Admin::factory()->create(), 'admin')
+            ->postJson("/api/objects/{$object->id}/medias", [
+                'file' => $file,
+            ]);
+
+        $response->assertStatus(201);
+
+        $response->assertJson(
+            Media::first()->only([
+                'path',
+                'mime_type',
+                'id',
+            ])
+        );
+
+        Storage::disk('public')->assertExists($file->hashName());
+
+        $this->assertDatabaseHas('medias', [
+            'path' => $file->hashName(), // because stored in root of disk
+            'mime_type' => 'audio/x-m4a',
+            'object_id' => $object->id,
+        ]);
     }
 
 }
