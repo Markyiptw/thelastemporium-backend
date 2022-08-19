@@ -10,6 +10,12 @@ class ObjectMediaController extends Controller
 {
     public function store(Request $request, Obj $object)
     {
+        $fiveMbInKb = 5 * 1024;
+
+        $request->validate([
+            'file' => "file|max:{$fiveMbInKb}",
+        ]);
+
         $file = $request->file('file');
 
         $path = $file->store(null, 'public');

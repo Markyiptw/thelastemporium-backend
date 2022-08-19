@@ -74,6 +74,20 @@ class ObjectMediaTest extends TestCase
             'mime_type' => 'image/jpeg',
             'object_id' => $object->id,
         ]);
+    }
 
+    public function test_cannot_upload_file_greater_than_5_mb()
+    {
+        $object = Obj::factory()->create();
+
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('', 5 * 1024 + 1);
+
+        $response = $this->postJson("/api/objects/{$object->id}/medias", [
+            'file' => $file,
+        ]);
+
+        $response->assertInvalid(['file']);
     }
 }
