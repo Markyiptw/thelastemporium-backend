@@ -19,4 +19,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware('guest')->post('/login', App::make(HigherOrderLoginController::class)->authenticate('web'));
+Route::middleware('guest:web')->post('/login', App::make(HigherOrderLoginController::class)->authenticate('web'));
+Route::middleware('guest:admin')->post('/admin/login', App::make(HigherOrderLoginController::class)->authenticate('admin'));
