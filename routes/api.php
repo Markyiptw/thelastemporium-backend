@@ -26,12 +26,15 @@ Route::resource('objects/{object}/locations', ObjectLocationController::class)->
 ]);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
+    Route::middleware('user')->get('/user', function (Request $request) {
+        return $request->user();
+    });
+    Route::middleware('admin')->get('/admin', function (Request $request) {
         return $request->user();
     });
 });
 
-Route::middleware('auth:sanctum,admin')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::resource('objects/{object}/medias', ObjectMediaController::class)->only([
         'store',
     ]);

@@ -20,7 +20,6 @@ class LoginTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-
         $this->assertAuthenticatedAs($user, 'sanctum');
     }
 
@@ -34,5 +33,16 @@ class LoginTest extends TestCase
         $response->assertInvalid(['email']);
 
         $this->assertGuest();
+    }
+
+    public function test_user_login_would_not_work_for_admin_login()
+    {
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->getJson('/api/admin');
+
+        $response->assertForbidden();
     }
 }
