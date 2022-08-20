@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\LoginController;
+use App\Http\Controllers\HigherOrderLoginController;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,4 +19,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware('guest')->post('/login', [LoginController::class, 'authenticate']);
+Route::middleware('guest')->post('/login', App::make(HigherOrderLoginController::class)->authenticate('web'));
