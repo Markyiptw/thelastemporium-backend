@@ -23,4 +23,16 @@ class LoginTest extends TestCase
 
         $this->assertAuthenticatedAs($user, 'sanctum');
     }
+
+    public function test_handle_wrong_credentials()
+    {
+        $response = $this->postJson('/login', [
+            'email' => fake()->email(),
+            'password' => 'wrong_password',
+        ]);
+
+        $response->assertInvalid(['email']);
+
+        $this->assertGuest();
+    }
 }

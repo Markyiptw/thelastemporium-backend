@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
@@ -20,6 +21,8 @@ class LoginController extends Controller
             return response('', 200);
         }
 
-        return abort(400);
+        throw ValidationException::withMessages([
+            'email' => 'The provided credentials do not match our records.',
+        ]);
     }
 }
