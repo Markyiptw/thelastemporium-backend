@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 
 /**
@@ -17,9 +18,11 @@ class MediaFactory extends Factory
      */
     public function definition()
     {
+        $file = UploadedFile::fake()->image('avatar.jpg');
+        $path = $file->store(null, 'public');
         return [
             'mime_type' => fake()->mimeType(),
-            'path' => Str::random(),
+            'path' => $path,
         ];
     }
 }

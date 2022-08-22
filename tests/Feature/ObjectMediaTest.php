@@ -207,4 +207,26 @@ class ObjectMediaTest extends TestCase
         ]);
     }
 
+    public function test_guest_can_index_medias_for_object()
+    {
+        $object = Obj::factory()
+            ->for(User::factory())
+            ->create();
+
+        Storage::fake('public');
+
+        $media = Media::factory()
+            ->for($object, 'object')
+            ->create();
+
+        $response = $this->get("/api/objects/{$object->id}/medias");
+
+        $response->assertJson(
+            ['data' => [$media->only([
+                'id',
+                'path',
+                'mime_type',
+            ])]]
+        );
+    }
 }

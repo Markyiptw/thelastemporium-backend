@@ -25,6 +25,10 @@ Route::resource('objects/{object}/locations', ObjectLocationController::class)->
     'index',
 ]);
 
+Route::resource('objects/{object}/medias', ObjectMediaController::class)->only([
+    'index',
+]);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('user')->get('/user', function (Request $request) {
         return $request->user();

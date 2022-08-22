@@ -35,4 +35,11 @@ class ObjectMediaController extends Controller
 
         return new MediaResource($media);
     }
+
+    public function index(Obj $object)
+    {
+        return MediaResource::collection(
+            $object->medias()->paginate(),
+        );
+    }
 }
