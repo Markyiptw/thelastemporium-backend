@@ -229,4 +229,45 @@ class ObjectMediaTest extends TestCase
             ])]]
         );
     }
+
+    public function test_medias_for_other_object_are_not_indexed()
+    {
+        // same logic as test_guests_other_locations_are_not_returned_for_an_object
+        $objs = [];
+
+        for ($i = 0; $i < 2; $i++) {
+            $objs[] = Obj::factory()->for(User::factory())->create();
+        }
+
+        Media::factory()
+            ->for($objs[0], 'object')
+            ->create();
+
+        $response = $this->getJson("/api/objects/{$objs[1]->id}/medias");
+        $this->assertEmpty($response['data']);
+    }
+
+    public function test_media_path_actually_works()
+    {
+        $object = Obj::factory()
+            ->for(User::factory())
+            ->create();
+
+        Storage::fake('public', [
+            'url' => env('APP_URL') . '/storage',
+        ]);
+
+        $file = UploadedFile::fake()->create('foo.m4a', 0, 'audio/x-m4a');
+
+        $response = $this
+            ->actingAs(Admin::factory()->create(), 'admin')
+            ->postJson("/api/objects/{$object->id}/medias", [
+                'file' => $file,
+            ]);
+
+        $this->assertEquals(
+            $response['path'],
+            env('APP_URL') . "/storage/{$file->hashName()}"// no real way to test if the file can be retrieved, but this is the url I think could work after studying how the disk works.
+        );
+    }
 }

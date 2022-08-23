@@ -26,7 +26,7 @@ class ObjectMediaController extends Controller
 
         $file = $request->file('file');
 
-        $path = $file->store(null, 'public');
+        $path = $file->store(null, 'public'); // relative to disk, i.e. storage/app/public/foo.jpg will just return foo.jpg
 
         $media = $object->medias()->create([
             'path' => $path,
