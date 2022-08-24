@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ObjController;
 use App\Http\Controllers\ObjectLocationController;
 use App\Http\Controllers\ObjectMediaController;
@@ -18,6 +19,10 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::resource('objects', ObjController::class)->only([
+    'index',
+]);
+
+Route::resource('medias', MediaController::class)->only([
     'index',
 ]);
 
