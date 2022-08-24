@@ -44,4 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('objects/{object}/medias', ObjectMediaController::class)->only([
         'store',
     ]);
+    Route::resource('objects/{object}/locations', ObjectLocationController::class)->only([
+        'store',
+    ]);
 });

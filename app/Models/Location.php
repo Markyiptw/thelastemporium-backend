@@ -9,6 +9,8 @@ class Location extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['latitude', 'longitude'];
+
     public function object()
     {
         return $this->belongsTo(Obj::class, 'object_id');

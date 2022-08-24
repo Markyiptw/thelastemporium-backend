@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Admin;
 use App\Models\Location;
 use App\Models\Obj;
 use App\Models\User;
@@ -48,4 +49,62 @@ class ObjectLocationTest extends TestCase
 
         $this->assertEmpty($response['data']);
     }
+
+    public function test_guest_cannot_store_locations()
+    {
+        $user = User::factory()->create();
+
+        $obj = Obj::factory()->for($user)->create();
+
+        $locationData = Location::factory()->make()->toArray();
+
+        $response = $this->postJson("/api/objects/{$obj->id}/locations", $locationData);
+
+        $response->assertUnauthorized();
+    }
+
+    public function test_user_can_store_locations_for_their_object()
+    {
+        $user = User::factory()->create();
+
+        $obj = Obj::factory()->for($user)->create();
+
+        $locationData = Location::factory()->make()->toArray();
+
+        $response = $this
+            ->actingAs($user)
+            ->postJson("/api/objects/{$obj->id}/locations", $locationData);
+
+        $response->assertStatus(201);
+        $response->assertJson($locationData);
+    }
+
+    public function test_user_cannot_store_locations_for_other_object()
+    {
+        $users = User::factory()->count(2)->has(Obj::factory(), 'object')->create();
+
+        $locationData = Location::factory()->make()->toArray();
+
+        $response = $this
+            ->actingAs($users[0])
+            ->postJson("/api/objects/{$users[1]->object->id}/locations", $locationData);
+
+        $response->assertForbidden();
+    }
+
+    public function test_admin_can_store_locations_for_any_object()
+    {
+        $obj = Obj::factory()->for(User::factory())->create();
+
+        $locationData = Location::factory()->make()->toArray();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->postJson("/api/objects/{$obj->id}/locations", $locationData);
+
+        $response->assertStatus(201);
+        $response->assertJson($locationData);
+    }
+
+    //validation not tested but implemented
 }

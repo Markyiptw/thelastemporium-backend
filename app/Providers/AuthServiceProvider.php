@@ -31,6 +31,10 @@ class AuthServiceProvider extends ServiceProvider
             if ($user->id === $object->user_id) {return true;};
         });
 
+        Gate::define('update-location', function ($user, Obj $object) {
+            if ($user->id === $object->user_id) {return true;};
+        });
+
         Gate::after(function ($user, $ability) {
             return $user instanceof Admin;
         });

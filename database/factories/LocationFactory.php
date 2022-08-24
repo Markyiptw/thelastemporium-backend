@@ -17,8 +17,8 @@ class LocationFactory extends Factory
     public function definition()
     {
         return [
-            'latitude' => fake()->randomFloat(),
-            'longitude' => fake()->randomFloat(),
+            'latitude' => fake()->randomFloat(null, -90, 90),
+            'longitude' => fake()->randomFloat(null, -180, 180),
         ];
     }
 }
