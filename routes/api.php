@@ -4,6 +4,7 @@ use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ObjController;
 use App\Http\Controllers\ObjectLocationController;
 use App\Http\Controllers\ObjectMediaController;
+use App\Http\Resources\ObjResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -50,4 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('admin')->resource('objects', ObjController::class)->only([
         'store',
     ]);
+    Route::middleware('user')->get('/object', function (Request $request) {
+        return new ObjResource($request->user()->object);
+    });
 });

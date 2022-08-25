@@ -96,4 +96,37 @@ class ObjectTest extends TestCase
 
         $response->assertUnauthorized();
     }
+
+    public function test_user_can_show_object()
+    {
+        $user = User::factory()->has(Obj::factory(), 'object')->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->getJson('/api/object');
+
+        $response
+            ->assertJson(
+                $user->object->only([
+                    'id',
+                    'name',
+                ])
+            );
+    }
+
+    public function test_guest_cannot_show_object()
+    {
+        $response = $this->getJson('/api/object');
+
+        $response->assertUnauthorized();
+    }
+
+    public function test_admin_cannot_show_object()
+    {
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->getJson('/api/object');
+
+        $response->assertForbidden();
+    }
 }
