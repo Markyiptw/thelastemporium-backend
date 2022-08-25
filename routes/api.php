@@ -47,4 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('objects/{object}/locations', ObjectLocationController::class)->only([
         'store',
     ]);
+    Route::middleware('admin')->resource('objects', ObjController::class)->only([
+        'store',
+    ]);
 });

@@ -11,6 +11,8 @@ class Obj extends Model
 
     protected $table = 'objects';
 
+    public $fillable = ['name'];
+
     public function locations()
     {
         return $this->hasMany(Location::class, 'object_id');

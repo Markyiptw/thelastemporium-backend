@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\Admin;
 use App\Models\Obj;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ObjectTest extends TestCase
@@ -25,5 +27,73 @@ class ObjectTest extends TestCase
                 ]),
             ],
         ]);
+    }
+
+    public function test_admin_can_create_object()
+    {
+        $data = Obj::factory()->make()->toArray();
+
+        $data['user'] = User::factory()
+            ->make(['password' => Str::random()])
+            ->only([
+                'name',
+                'email',
+                'password',
+            ]);
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->postJson('/api/objects', $data);
+
+        $response->assertStatus(201);
+        $response->assertJson($data);
+
+        $this->assertDatabaseHas('users', [
+            'name' => $data['user']['name'],
+            'email' => $data['user']['email'],
+            // hashed password not easy to check, skip it
+        ]);
+
+        $this->assertDatabaseHas('objects', [
+            'name' => $data['name'],
+            'user_id' => $response['user']['id'],
+        ]);
+    }
+
+    public function test_user_cannot_create_object()
+    {
+        $data = Obj::factory()->make()->toArray();
+
+        $data['user'] = User::factory()
+            ->make(['password' => Str::random()])
+            ->only([
+                'name',
+                'email',
+                'password',
+            ]);
+
+        $response = $this
+            ->actingAs(User::factory()->create())
+            ->postJson('/api/objects', $data);
+
+        $response->assertForbidden();
+    }
+
+    public function test_guest_cannot_create_object()
+    {
+        $data = Obj::factory()->make()->toArray();
+
+        $data['user'] = User::factory()
+            ->make(['password' => Str::random()])
+            ->only([
+                'name',
+                'email',
+                'password',
+            ]);
+
+        $response = $this
+            ->postJson('/api/objects', $data);
+
+        $response->assertUnauthorized();
     }
 }

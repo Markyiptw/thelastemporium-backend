@@ -77,6 +77,8 @@ class ObjectLocationTest extends TestCase
 
         $response->assertStatus(201);
         $response->assertJson($locationData);
+
+        $this->assertDatabaseHas('locations', $locationData);
     }
 
     public function test_user_cannot_store_locations_for_other_object()
@@ -104,6 +106,7 @@ class ObjectLocationTest extends TestCase
 
         $response->assertStatus(201);
         $response->assertJson($locationData);
+        $this->assertDatabaseHas('locations', $locationData);
     }
 
     //validation not tested but implemented
