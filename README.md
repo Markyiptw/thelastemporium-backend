@@ -40,3 +40,87 @@
 
 7. (Optional) set alias for sail
    See https://laravel.com/docs/9.x/sail#configuring-a-shell-alias
+
+8. Create admin account
+    ```
+    ./vendor/bin/sail create:admin {name} {email} {password}
+    ```
+
+# Example Frontend Integration
+
+## Setup
+
+```js
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "http://localhost";
+```
+
+## Authentication
+
+### Admin
+
+```js
+(async () => {
+    await axios.get("/sanctum/csrf-cookie");
+    await axios.post("/admin/login", {
+        // those created with step 8 above
+        email,
+        password,
+    });
+    await axios.get("/api/admin"); // will return the authenticated admin if previous steps done correctly
+})();
+```
+
+### User
+
+Note: have to first clear cookie if previously logged in to admin
+
+```js
+(async () => {
+    await axios.get("/sanctum/csrf-cookie");
+    await axios.post("/login", {
+        // those created with step 8 above
+        email: "foo@example.com",
+        password: "password",
+    });
+    await axios.get("/api/user"); // will return the authenticated admin if previous steps done correctly
+    await axios.get("/api/object"); // will return the authenticated admin if previous steps done correctly
+})();
+```
+
+## Business Logics
+
+### Create new user and object (admin only)
+
+```js
+(async () => {
+    const response = await axios.post("/api/objects", {
+        name: "obj0", // name of object
+        user: {
+            name: "usr0", // name of user,
+            // for login
+            email: "foo@example.com",
+            password: "password",
+        },
+    });
+})();
+```
+
+### Update Location
+
+```js
+(async () => {
+    const response = await axios.post("/api/objects/1/locations", {
+        latitude,
+        longitude,
+    });
+})();
+```
+
+### List Locations for an Object
+
+```js
+(async () => {
+    const response = await axios.get("/api/objects/1/locations");
+})();
+```
