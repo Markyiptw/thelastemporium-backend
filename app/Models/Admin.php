@@ -8,4 +8,10 @@ use Illuminate\Foundation\Auth\User;
 class Admin extends User
 {
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
 }
