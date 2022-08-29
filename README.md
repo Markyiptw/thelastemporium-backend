@@ -41,9 +41,13 @@
 7. (Optional) set alias for sail
    See https://laravel.com/docs/9.x/sail#configuring-a-shell-alias
 
-8. Create admin account
+8. Run database migration
     ```
-    ./vendor/bin/sail create:admin {name} {email} {password}
+    ./vendor/bin/sail artisan migrate
+    ```
+9. Create admin account
+    ```
+    ./vendor/bin/sail artisan create:admin {name} {email} {password}
     ```
 
 # Example Frontend Integration
@@ -79,12 +83,12 @@ Note: have to first clear cookie if previously logged in to admin
 (async () => {
     await axios.get("/sanctum/csrf-cookie");
     await axios.post("/login", {
-        // those created with step 8 above
-        email: "foo@example.com",
-        password: "password",
+        // can be created with admin account, see later sections
+        email,
+        password,
     });
-    await axios.get("/api/user"); // will return the authenticated admin if previous steps done correctly
-    await axios.get("/api/object"); // will return the authenticated admin if previous steps done correctly
+    await axios.get("/api/user"); // will return the authenticated user if previous steps done correctly
+    await axios.get("/api/object"); // will return the object belongs to the user if previous steps done correctly
 })();
 ```
 
