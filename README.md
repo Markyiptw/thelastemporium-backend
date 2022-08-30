@@ -128,3 +128,8 @@ Note: have to first clear cookie if previously logged in to admin
     const response = await axios.get("/api/objects/1/locations");
 })();
 ```
+
+---
+## License
+
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
