@@ -29,6 +29,10 @@ class MessageFromTheLastEmporium extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this
+            ->markdown('emails.message-from-the-last-emporium')
+            ->with([
+                'messageText' => $this->message, // the variable name 'message' conflicts with blade hint.
+            ]);
     }
 }
