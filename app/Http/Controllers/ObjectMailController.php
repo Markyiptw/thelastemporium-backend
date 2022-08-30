@@ -6,12 +6,15 @@ use App\Http\Resources\MailResource;
 use App\Mail\MessageFromTheLastEmporium;
 use App\Models\Obj;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 
 class ObjectMailController extends Controller
 {
     public function store(Obj $object, Request $request)
     {
+        Gate::authorize('object-specific-action', $object);
+
         $validated = $request->validate([
             'to' => ['required', 'array', 'min:1'],
             'to.*' => ['required', 'email'],
