@@ -27,11 +27,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::define('upload-media', function ($user, Obj $object) {
-            if ($user->id === $object->user_id) {return true;};
-        });
-
-        Gate::define('update-location', function ($user, Obj $object) {
+        Gate::define('object-specific-action', function ($user, Obj $object) {
             if ($user->id === $object->user_id) {return true;};
         });
 

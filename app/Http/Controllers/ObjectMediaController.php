@@ -11,7 +11,7 @@ class ObjectMediaController extends Controller
 {
     public function store(Request $request, Obj $object)
     {
-        Gate::authorize('upload-media', $object);
+        Gate::authorize('object-specific-action', $object);
 
         $fiveMbInKb = 5 * 1024;
 

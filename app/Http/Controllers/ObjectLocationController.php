@@ -16,7 +16,7 @@ class ObjectLocationController extends Controller
 
     public function store(Request $request, Obj $object)
     {
-        Gate::authorize('update-location', $object);
+        Gate::authorize('object-specific-action', $object);
 
         $validated = $request->validate([
             'latitude' => ['required', 'numeric', 'min:-90', 'max:90'],
