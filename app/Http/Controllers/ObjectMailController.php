@@ -12,14 +12,26 @@ class ObjectMailController extends Controller
 {
     public function store(Obj $object, Request $request)
     {
-        Mail::to($request->input('to'))
-            ->cc($request->input('cc'))
-            ->send(new MessageFromTheLastEmporium($request->input('message')));
+        $validated = $request->validate([
+            'to' => ['required', 'array', 'min:1'],
+            'to.*' => ['required', 'email'],
+            'cc' => ['nullable', 'array'],
+            'cc.*' => ['required', 'email'],
+            'message' => ['required', 'string'],
+        ]);
+
+        $mail = Mail::to($validated['to']);
+
+        if (array_key_exists('cc', $validated)) {
+            $mail->cc($validated['cc']);
+        }
+
+        $mail->send(new MessageFromTheLastEmporium($validated['message']));
 
         $mail = $object->mails()->create([
-            'cc' => $request->input('cc'),
-            'to' => $request->input('to'),
-            'message' => $request->input('message'),
+            'to' => $validated['to'],
+            'cc' => $validated['cc'] ?? null,
+            'message' => $validated['message'],
         ]);
 
         return new MailResource($mail);
