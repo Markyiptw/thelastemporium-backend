@@ -175,5 +175,100 @@ class ObjectMailTest extends TestCase
                 ->whereJsonContains('cc', $data['cc'])
                 ->where('message', $data['message'])
                 ->exists()
-        );}
+        );
+    }
+
+    public function test_users_can_index_mails_for_their_object()
+    {
+        $user = User::factory()->create();
+
+        $object = Obj::factory()->for($user)->create();
+
+        $mail = Models\Mail::factory()->for($object, 'object')->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get("/api/objects/{$object->id}/mails");
+
+        $response->assertStatus(200);
+
+        $response->assertJson([
+            'data' => [
+                $mail->only([
+                    'to',
+                    'cc',
+                    'message',
+                    'id',
+                ]),
+            ],
+        ]);
+    }
+
+    public function test_mails_for_other_object_are_not_indexed()
+    {
+        $user = User::factory()->create();
+
+        $object = Obj::factory()->for($user)->create();
+
+        Models\Mail::factory()
+            ->for(Obj::factory()->for(User::factory()), 'object')
+            ->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get("/api/objects/{$object->id}/mails");
+
+        $response->assertStatus(200);
+
+        $this->assertEmpty($response['data']);
+    }
+
+    public function test_guest_cannot_index_mails()
+    {
+        $user = User::factory()->create();
+
+        $object = Obj::factory()->for($user)->create();
+
+        Models\Mail::factory()->for($object, 'object')->create();
+
+        $response = $this
+            ->getJson("/api/objects/{$object->id}/mails");
+
+        $response->assertUnauthorized();
+    }
+
+    public function test_user_cannot_index_mails_for_object_not_belongs_to_them()
+    {
+        $object = Obj::factory()->for(User::factory())->create();
+
+        $response = $this
+            ->actingAs(User::factory()->create())
+            ->get("/api/objects/{$object->id}/mails");
+
+        $response->assertForbidden();
+    }
+
+    public function test_admin_can_index_mails_for_any_object()
+    {
+        $object = Obj::factory()->for(User::factory())->create();
+
+        $mail = Models\Mail::factory()->for($object, 'object')->create();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->get("/api/objects/{$object->id}/mails");
+
+        $response->assertStatus(200);
+
+        $response->assertJson([
+            'data' => [
+                $mail->only([
+                    'to',
+                    'cc',
+                    'message',
+                    'id',
+                ]),
+            ],
+        ]);
+    }
 }

@@ -39,4 +39,13 @@ class ObjectMailController extends Controller
 
         return new MailResource($mail);
     }
+
+    public function index(Obj $object)
+    {
+        Gate::authorize('object-specific-action', $object);
+
+        return MailResource::collection(
+            $object->mails()->paginate()
+        );
+    }
 }

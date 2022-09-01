@@ -55,5 +55,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('user')->get('/object', function (Request $request) {
         return new ObjResource($request->user()->object);
     });
-    Route::resource('objects/{object}/mails', ObjectMailController::class)->only(['store']);
+    Route::resource('objects/{object}/mails', ObjectMailController::class)->only(['store', 'index']);
 });

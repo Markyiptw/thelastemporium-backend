@@ -15,4 +15,9 @@ class Mail extends Model
     ];
 
     protected $fillable = ['to', 'cc', 'message'];
+
+    public function object()
+    {
+        return $this->belongsTo(Obj::class, 'object_id');
+    }
 }
