@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\MailResource;
 use App\Mail\MessageFromTheLastEmporium;
+use App\Models\Mail;
 use App\Models\Obj;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Mail;
 
 class ObjectMailController extends Controller
 {
@@ -23,7 +24,7 @@ class ObjectMailController extends Controller
             'message' => ['required', 'string'],
         ]);
 
-        $mail = Mail::to($validated['to']);
+        $mail = Facades\Mail::to($validated['to']);
 
         if (array_key_exists('cc', $validated)) {
             $mail->cc($validated['cc']);
@@ -47,5 +48,12 @@ class ObjectMailController extends Controller
         return MailResource::collection(
             $object->mails()->paginate()
         );
+    }
+
+    public function show(Obj $object, Mail $mail)
+    {
+        Gate::authorize('object-specific-action', $object);
+
+        return new MailResource($mail);
     }
 }

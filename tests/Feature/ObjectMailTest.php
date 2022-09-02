@@ -271,4 +271,82 @@ class ObjectMailTest extends TestCase
             ],
         ]);
     }
+
+    public function test_users_can_list_mail_for_their_object()
+    {
+        $user = User::factory()->create();
+        $object = Obj::factory()->for($user)->create();
+        $mail = Models\Mail::factory()->for($object, 'object')->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->get("/api/objects/{$object->id}/mails/{$mail->id}");
+
+        $response->assertStatus(200);
+
+        $response->assertJson(
+            $mail->only([
+                'to',
+                'cc',
+                'message',
+                'id',
+            ]),
+        );
+    }
+
+    public function test_mail_not_belongs_to_object_return_not_found()
+    {
+        $object = Obj::factory()->for(User::factory())->create();
+        $mail = Models\Mail::factory()->for(Obj::factory()->for(User::factory()), 'object')->create();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->get("/api/objects/{$object->id}/mails/{$mail->id}");
+
+        $response->assertNotFound();
+    }
+
+    public function test_guest_cannot_show_mail()
+    {
+        $object = Obj::factory()->for(User::factory())->create();
+        $mail = Models\Mail::factory()->for($object, 'object')->create();
+
+        $response = $this
+            ->getJson("/api/objects/{$object->id}/mails/{$mail->id}");
+
+        $response->assertUnauthorized();
+    }
+
+    public function test_admin_can_show_any_mail()
+    {
+        $object = Obj::factory()->for(User::factory())->create();
+        $mail = Models\Mail::factory()->for($object, 'object')->create();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->getJson("/api/objects/{$object->id}/mails/{$mail->id}");
+
+        $response->assertStatus(200);
+
+        $response->assertJson(
+            $mail->only([
+                'to',
+                'cc',
+                'message',
+                'id',
+            ]),
+        );
+    }
+
+    public function test_user_cannot_show_mail_not_belongs_to_them()
+    {
+        $object = Obj::factory()->for(User::factory())->create();
+        $mail = Models\Mail::factory()->for($object, 'object')->create();
+
+        $response = $this
+            ->actingAs(User::factory()->create())
+            ->getJson("/api/objects/{$object->id}/mails/{$mail->id}");
+
+        $response->assertForbidden();
+    }
 }
