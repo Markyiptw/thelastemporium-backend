@@ -8,14 +8,11 @@ use App\Models\Mail;
 use App\Models\Obj;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades;
-use Illuminate\Support\Facades\Gate;
 
 class ObjectMailController extends Controller
 {
     public function store(Obj $object, Request $request)
     {
-        Gate::authorize('object-specific-action', $object);
-
         $validated = $request->validate([
             'to' => ['required', 'array', 'min:1'],
             'to.*' => ['required', 'email'],
@@ -43,8 +40,6 @@ class ObjectMailController extends Controller
 
     public function index(Obj $object)
     {
-        Gate::authorize('object-specific-action', $object);
-
         return MailResource::collection(
             $object->mails()->paginate()
         );
@@ -52,8 +47,6 @@ class ObjectMailController extends Controller
 
     public function show(Obj $object, Mail $mail)
     {
-        Gate::authorize('object-specific-action', $object);
-
         return new MailResource($mail);
     }
 }
