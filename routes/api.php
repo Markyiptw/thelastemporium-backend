@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ObjController;
+use App\Http\Controllers\ObjectDraftController;
 use App\Http\Controllers\ObjectLocationController;
 use App\Http\Controllers\ObjectMailController;
 use App\Http\Controllers\ObjectMediaController;
@@ -59,4 +60,8 @@ Route::middleware('auth:sanctum')->group(function () {
         ->only(['store', 'index', 'show'])
         ->middleware('can:object-specific-action,object')
         ->scoped();
+
+    Route::resource('objects.drafts', ObjectDraftController::class)
+        ->only(['store'])
+    ;
 });
