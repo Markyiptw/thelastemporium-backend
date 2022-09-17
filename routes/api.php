@@ -6,6 +6,7 @@ use App\Http\Controllers\ObjectDraftController;
 use App\Http\Controllers\ObjectLocationController;
 use App\Http\Controllers\ObjectMailController;
 use App\Http\Controllers\ObjectMediaController;
+use App\Http\Controllers\PostController;
 use App\Http\Resources\ObjResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -62,6 +63,13 @@ Route::middleware('auth:sanctum')->group(function () {
         ->scoped();
 
     Route::resource('objects.drafts', ObjectDraftController::class)
-        ->only(['store'])
-    ;
+        ->only(['store']);
+
+    Route::resource('posts', PostController::class)
+        ->only(['index', 'show']);
+
+    Route::resource('posts', PostController::class)
+        ->middleware('admin')
+        ->only(['store']);
+
 });
