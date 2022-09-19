@@ -70,6 +70,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::resource('posts', PostController::class)
         ->middleware('admin')
-        ->only(['store']);
-
+        ->only(['store', 'update', 'destroy']);
 });

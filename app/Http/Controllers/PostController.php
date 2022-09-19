@@ -35,4 +35,26 @@ class PostController extends Controller
 
         return new PostResource($post);
     }
+
+    public function update(Post $post, Request $request)
+    {
+        $validated = $request->validate([
+            'subject' => ['required', 'string'],
+            'body' => ['required', 'string'],
+            'from' => ['required', 'string'],
+            'created_at' => ['nullable', 'date'],
+        ]);
+
+        $validated = collect($validated)->filter(fn($value) => !is_null($value))->all();
+
+        $post->update($validated);
+
+        return new PostResource($post);
+    }
+
+    public function destroy(Post $post)
+    {
+        $post->delete();
+        return response()->noContent();
+    }
 }

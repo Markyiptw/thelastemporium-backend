@@ -168,4 +168,103 @@ class PostTest extends TestCase
 
         $response->assertForbidden();
     }
+
+    public function test_admin_can_edit_post()
+    {
+        $post = Post::factory()->create();
+
+        $data = Post::factory()->make()->toArray();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->patchJson("/api/posts/{$post->id}", $data);
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('posts', array_merge($data, ['id' => $post->id]));
+    }
+
+    public function test_admin_can_edit_post_with_created_at()
+    {
+        $post = Post::factory()->create();
+
+        $data = Post::factory()
+            ->make(['created_at' => $post->created_at->clone()->addSecond()]) // make sure it's not the same create_at
+            ->toArray();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->patchJson("/api/posts/{$post->id}", $data);
+
+        $response->assertStatus(200);
+
+        $newPost = array_merge($data, ['id' => $post->id]);
+
+        $response->assertJson($newPost);
+
+        $this->assertDatabaseHas('posts', $newPost);
+    }
+
+    public function test_guest_cannot_edit_post()
+    {
+        $post = Post::factory()->create();
+
+        $data = Post::factory()->make()->toArray();
+
+        $response = $this
+            ->patchJson("/api/posts/{$post->id}", $data);
+
+        $response->assertUnauthorized();
+    }
+
+    public function test_user_cannot_edit_post()
+    {
+        $post = Post::factory()->create();
+
+        $data = Post::factory()->make()->toArray();
+
+        $response = $this
+            ->actingAs(User::factory()->create())
+            ->patchJson("/api/posts/{$post->id}", $data);
+
+        $response->assertForbidden();
+    }
+
+    public function test_admin_can_delete_post()
+    {
+        $post = Post::factory()->create();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->deleteJson("/api/posts/{$post->id}");
+
+        $response->assertStatus(204);
+
+        $this->assertModelMissing($post);
+    }
+
+    public function test_user_cannot_delete_post()
+    {
+        $post = Post::factory()->create();
+
+        $data = Post::factory()->make()->toArray();
+
+        $response = $this
+            ->actingAs(User::factory()->create())
+            ->patchJson("/api/posts/{$post->id}", $data);
+
+        $response->assertForbidden();
+    }
+
+    public function test_guest_cannot_delete_post()
+    {
+        $post = Post::factory()->create();
+
+        $data = Post::factory()->make()->toArray();
+
+        $response = $this
+            ->patchJson("/api/posts/{$post->id}", $data);
+
+        $response->assertUnauthorized();
+    }
 }
