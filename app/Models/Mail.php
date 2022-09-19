@@ -14,7 +14,7 @@ class Mail extends Model
         'cc' => 'array',
     ];
 
-    protected $fillable = ['to', 'cc', 'message'];
+    protected $fillable = ['to', 'cc', 'subject', 'message'];
 
     public function object()
     {

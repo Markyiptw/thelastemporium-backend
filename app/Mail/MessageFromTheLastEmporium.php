@@ -10,6 +10,7 @@ class MessageFromTheLastEmporium extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $subject;
     public $message;
 
     /**
@@ -17,8 +18,9 @@ class MessageFromTheLastEmporium extends Mailable
      *
      * @return void
      */
-    public function __construct($message)
+    public function __construct($subject, $message)
     {
+        $this->subject = $subject;
         $this->message = $message;
     }
 
@@ -31,6 +33,7 @@ class MessageFromTheLastEmporium extends Mailable
     {
         return $this
             ->markdown('emails.message-from-the-last-emporium')
+            ->subject($this->subject)
             ->with([
                 'messageText' => $this->message, // the variable name 'message' conflicts with blade hint.
             ]);

@@ -17,7 +17,8 @@ return new class extends Migration
             $table->id();
             $table->json('to');
             $table->json('cc')->nullable();
-            $table->text('message');
+            $table->string('subject')->nullable();
+            $table->text('message')->nullable();
             $table->foreignId('object_id')->constrained();
             $table->timestamps();
         });

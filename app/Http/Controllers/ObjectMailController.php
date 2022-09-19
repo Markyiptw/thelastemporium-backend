@@ -18,6 +18,7 @@ class ObjectMailController extends Controller
             'to.*' => ['required', 'email'],
             'cc' => ['nullable', 'array'],
             'cc.*' => ['required', 'email'],
+            'subject' => ['required', 'string'],
             'message' => ['required', 'string'],
         ]);
 
@@ -27,11 +28,12 @@ class ObjectMailController extends Controller
             $mail->cc($validated['cc']);
         }
 
-        $mail->send(new MessageFromTheLastEmporium($validated['message']));
+        $mail->send(new MessageFromTheLastEmporium($validated['subject'], $validated['message']));
 
         $mail = $object->mails()->create([
             'to' => $validated['to'],
             'cc' => $validated['cc'] ?? null,
+            'subject' => $validated['subject'],
             'message' => $validated['message'],
         ]);
 

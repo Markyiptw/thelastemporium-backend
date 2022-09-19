@@ -19,6 +19,7 @@ class MailFactory extends Factory
         return [
             'cc' => [fake()->email()],
             'to' => [fake()->email()],
+            'subject' => fake()->sentence(),
             'message' => fake()->paragraph(),
         ];
     }
