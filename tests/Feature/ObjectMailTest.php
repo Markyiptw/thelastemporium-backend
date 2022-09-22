@@ -60,11 +60,11 @@ class ObjectMailTest extends TestCase
 
         Mail::fake();
 
-        $data = Models\Mail::factory()->make()->only(['to', 'message']);
+        $data = collect(Models\Mail::factory()->make())->except(['cc'])->all();
 
         $response = $this
             ->actingAs($user, 'sanctum')
-            ->post("/api/objects/{$obj->id}/mails", $data);
+            ->postJson("/api/objects/{$obj->id}/mails", $data);
 
         $response->assertStatus(201);
 
