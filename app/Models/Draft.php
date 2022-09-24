@@ -14,6 +14,8 @@ class Draft extends Model
         'cc' => 'array',
     ];
 
+    protected $fillable = ['to', 'cc', 'subject', 'message', 'name'];
+
     public function object()
     {
         return $this->belongsTo(Obj::class, 'object_id');

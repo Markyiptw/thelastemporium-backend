@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\App;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Draft>
@@ -16,10 +17,6 @@ class DraftFactory extends Factory
      */
     public function definition()
     {
-        return [
-            'cc' => [fake()->email()],
-            'to' => [fake()->email()],
-            'message' => fake()->paragraph(),
-        ];
+        return array_merge(App::make(MailFactory::class)->definition(), ['name' => fake()->name()]);
     }
 }

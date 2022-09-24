@@ -32,4 +32,9 @@ class Obj extends Model
     {
         return $this->hasMany(Mail::class, 'object_id');
     }
+
+    public function drafts()
+    {
+        return $this->hasMany(Draft::class, 'object_id');
+    }
 }

@@ -30,12 +30,7 @@ class ObjectMailController extends Controller
 
         $mail->send(new MessageFromTheLastEmporium($validated['subject'], $validated['message']));
 
-        $mail = $object->mails()->create([
-            'to' => $validated['to'],
-            'cc' => $validated['cc'] ?? null,
-            'subject' => $validated['subject'],
-            'message' => $validated['message'],
-        ]);
+        $mail = $object->mails()->create($validated);
 
         return new MailResource($mail);
     }

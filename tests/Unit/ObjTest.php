@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\Draft;
 use App\Models\Mail;
 use App\Models\Media;
 use App\Models\Obj;
@@ -29,5 +30,14 @@ class ObjTest extends TestCase
         $mail = Mail::factory()->create(['object_id' => $obj->id]);
 
         $this->assertTrue($obj->mails->contains($mail));
+    }
+
+    public function test_obj_has_drafts()
+    {
+        $obj = Obj::factory()->for(User::factory())->create();
+
+        $draaft = Draft::factory()->create(['object_id' => $obj->id]);
+
+        $this->assertTrue($obj->drafts->contains($draaft));
     }
 }
