@@ -552,4 +552,79 @@ class ObjectDraftTest extends TestCase
 
         $response->assertInvalid(['to', 'subject', 'message']);
     }
+
+    public function test_admin_can_delete_drafts()
+    {
+        $obj = Obj::factory()->for(User::factory())->create();
+
+        $draft = Draft::factory()
+            ->for($obj, 'object')
+            ->create();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->deleteJson("/api/objects/{$obj->id}/drafts/{$draft->id}");
+
+        $response->assertStatus(204);
+
+        $this->assertModelMissing($draft);
+    }
+
+    public function test_user_cannot_delete_their_own_draft()
+    {
+        $user = User::factory()->create();
+
+        $obj = Obj::factory()->for(User::factory())->create();
+
+        $draft = Draft::factory()
+            ->for($obj, 'object')
+            ->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->deleteJson("/api/objects/{$obj->id}/drafts/{$draft->id}");
+
+        $response->assertForbidden();
+    }
+
+    public function test_deleting_draft_not_belongs_to_object_return_not_found()
+    {
+        $object = Obj::factory()->for(User::factory())->create();
+        $draft = Draft::factory()->for(Obj::factory()->for(User::factory()), 'object')->create();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->deleteJson("/api/objects/{$object->id}/drafts/{$draft->id}");
+
+        $response->assertNotFound();
+    }
+
+    public function test_guests_cannot_delete_draft()
+    {
+        $obj = Obj::factory()->for(User::factory())->create();
+
+        $draft = Draft::factory()
+            ->for($obj, 'object')
+            ->create();
+
+        $response = $this
+            ->deleteJson("/api/objects/{$obj->id}/drafts/{$draft->id}");
+
+        $response->assertUnauthorized();
+    }
+
+    public function test_user_cannot_delete_drafts_not_belongs_to_them()
+    {
+        $obj = Obj::factory()->for(User::factory()->create())->create();
+
+        $draft = Draft::factory()
+            ->for($obj, 'object')
+            ->create();
+
+        $response = $this
+            ->actingAs(User::factory()->create())
+            ->deleteJson("/api/objects/{$obj->id}/drafts/{$draft->id}");
+
+        $response->assertForbidden();
+    }
 }

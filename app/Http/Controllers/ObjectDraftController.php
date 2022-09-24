@@ -65,4 +65,9 @@ class ObjectDraftController extends Controller
         return $mailResource;
     }
 
+    public function destroy(Obj $object, Draft $draft)
+    {
+        $draft->delete();
+        return response()->noContent();
+    }
 }

@@ -71,6 +71,10 @@ Route::middleware('auth:sanctum')->group(function () {
         ->post('objects/{object}/drafts/{draft}/send', [ObjectDraftController::class, 'send'])
         ->middleware('can:object-specific-action,object');
 
+    Route::scopeBindings()
+        ->middleware('admin')
+        ->delete('objects/{object}/drafts/{draft}', [ObjectDraftController::class, 'destroy']);
+
     Route::resource('posts', PostController::class)
         ->only(['index', 'show']);
 
