@@ -6,6 +6,7 @@ use App\Http\Resources\DraftResource;
 use App\Models\Draft;
 use App\Models\Obj;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 
 class ObjectDraftController extends Controller
 {
@@ -55,6 +56,13 @@ class ObjectDraftController extends Controller
         $draft->update($validated);
 
         return new DraftResource($draft);
+    }
+
+    public function send(Obj $object, Draft $draft, Request $request)
+    {
+        $mailResource = App::make(ObjectMailController::class)->store($object, $request);
+        $draft->delete();
+        return $mailResource;
     }
 
 }

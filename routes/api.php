@@ -67,6 +67,10 @@ Route::middleware('auth:sanctum')->group(function () {
         ->only(['store', 'index', 'show', 'update'])
         ->scoped();
 
+    Route::scopeBindings()
+        ->post('objects/{object}/drafts/{draft}/send', [ObjectDraftController::class, 'send'])
+        ->middleware('can:object-specific-action,object');
+
     Route::resource('posts', PostController::class)
         ->only(['index', 'show']);
 

@@ -2,12 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Mail\MessageFromTheLastEmporium;
+use App\Models;
 use App\Models\Admin;
 use App\Models\Draft;
 use App\Models\Obj;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class ObjectDraftTest extends TestCase
@@ -333,7 +336,7 @@ class ObjectDraftTest extends TestCase
 
         $response = $this
             ->actingAs(Admin::factory()->create())
-            ->patchJson("/api/objects/{$object->id}/draft/{$draft->id}");
+            ->patchJson("/api/objects/{$object->id}/drafts/{$draft->id}");
 
         $response->assertNotFound();
     }
@@ -402,5 +405,151 @@ class ObjectDraftTest extends TestCase
             ->patchJson("/api/objects/{$obj->id}/drafts/{$draft->id}", $data);
 
         $response->assertForbidden();
+    }
+
+    public function test_user_can_send_draft()
+    {
+        $user = User::factory()->create();
+
+        $obj = Obj::factory()->for($user)->create();
+
+        $draft = Draft::factory()
+            ->for($obj, 'object')
+            ->create();
+
+        Mail::fake();
+
+        $data = Models\Mail::factory()->make()->toArray(); // use fake mail insdead of fake draft
+
+        $response = $this
+            ->actingAs($user, 'sanctum')
+            ->postJson("/api/objects/{$obj->id}/drafts/{$draft->id}/send", $data);
+
+        $response->assertStatus(201);
+
+        $response->assertJson($data);
+
+        Mail::assertSent(function (MessageFromTheLastEmporium $mail) use ($data) {
+            return $mail->message = $data['message'] &&
+            $mail->hasTo($data['to']) &&
+            $mail->hasCc($data['cc']) &&
+            $mail->hasSubject($data['subject'])
+            ;
+        });
+
+        $this->assertTrue(
+            DB::table('mails')
+                ->whereJsonContains('to', $data['to'])
+                ->whereJsonContains('cc', $data['cc'])
+                ->where('subject', $data['subject'])
+                ->where('message', $data['message'])
+                ->exists()
+        );
+
+        $this->assertModelMissing($draft);
+    }
+
+    //
+
+    public function test_sending_draft_not_belongs_to_object_return_not_found()
+    {
+        $object = Obj::factory()->for(User::factory())->create();
+        $draft = Draft::factory()->for(Obj::factory()->for(User::factory()), 'object')->create();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->postJson("/api/objects/{$object->id}/drafts/{$draft->id}/send", Models\Mail::factory()->make()->toArray());
+
+        $response->assertNotFound();
+    }
+
+    public function test_guests_cannot_send_draft()
+    {
+        $obj = Obj::factory()->for(User::factory()->create())->create();
+
+        $draft = Draft::factory()
+            ->for($obj, 'object')
+            ->create();
+
+        $data = Models\Mail::factory()->make()->toArray();
+
+        $response = $this
+            ->postJson("/api/objects/{$obj->id}/drafts/{$draft->id}/send", $data);
+
+        $response->assertUnauthorized();
+    }
+
+    public function test_admins_can_send_any_draft()
+    {
+        $obj = Obj::factory()->for(User::factory()->create())->create();
+
+        $draft = Draft::factory()
+            ->for($obj, 'object')
+            ->create();
+
+        Mail::fake();
+
+        $data = Models\Mail::factory()->make()->toArray(); // use fake mail insdead of fake draft
+
+        $response = $this
+            ->actingAs(Admin::factory()->create(), 'sanctum')
+            ->postJson("/api/objects/{$obj->id}/drafts/{$draft->id}/send", $data);
+
+        $response->assertStatus(201);
+
+        $response->assertJson($data);
+
+        Mail::assertSent(function (MessageFromTheLastEmporium $mail) use ($data) {
+            return $mail->message = $data['message'] &&
+            $mail->hasTo($data['to']) &&
+            $mail->hasCc($data['cc']) &&
+            $mail->hasSubject($data['subject'])
+            ;
+        });
+
+        $this->assertTrue(
+            DB::table('mails')
+                ->whereJsonContains('to', $data['to'])
+                ->whereJsonContains('cc', $data['cc'])
+                ->where('subject', $data['subject'])
+                ->where('message', $data['message'])
+                ->exists()
+        );
+
+        $this->assertModelMissing($draft);
+    }
+
+    public function test_user_cannot_send_drafts_not_belongs_to_them()
+    {
+        $obj = Obj::factory()->for(User::factory()->create())->create();
+
+        $draft = Draft::factory()
+            ->for($obj, 'object')
+            ->create();
+
+        $data = Models\Mail::factory()->make()->toArray(); // use fake mail insdead of fake draft
+
+        $response = $this
+            ->actingAs(User::factory()->create())
+            ->postJson("/api/objects/{$obj->id}/drafts/{$draft->id}/send", $data);
+
+        $response->assertForbidden();
+    }
+
+    public function test_validation_rules_from_mail_sending_applies()
+    {
+        $obj = Obj::factory()->for(User::factory())->create();
+
+        $draft = Draft::factory()
+            ->for($obj, 'object')
+            ->create();
+
+        Mail::fake();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->postJson("/api/objects/{$obj->id}/drafts/{$draft->id}/send");
+
+        $response->assertInvalid(['to', 'subject', 'message']);
     }
 }
