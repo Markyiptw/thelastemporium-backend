@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('path');
             $table->string('mime_type');
+            $table->text('caption');
             $table->foreignId('object_id')->constrained();
             $table->timestamps();
         });

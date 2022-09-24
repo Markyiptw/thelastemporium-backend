@@ -23,6 +23,7 @@ class MediaFactory extends Factory
         return [
             'mime_type' => fake()->mimeType(),
             'path' => $path,
+            'caption' => fake()->paragraph(),
         ];
     }
 }

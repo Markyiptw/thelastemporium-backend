@@ -25,10 +25,13 @@ class ObjectMediaTest extends TestCase
 
         $file = UploadedFile::fake()->create('foo.m4a', 0, 'audio/x-m4a'); // https://stackoverflow.com/questions/65796709/what-content-type-are-voice-memo-files-on-ios
 
+        $caption = fake()->paragraph();
+
         $response = $this
             ->actingAs($user)
             ->postJson("/api/objects/{$object->id}/medias", [
                 'file' => $file,
+                'caption' => $caption,
             ]);
 
         $response->assertStatus(201);
@@ -38,6 +41,7 @@ class ObjectMediaTest extends TestCase
                 'path',
                 'mime_type',
                 'id',
+                'caption',
             ])
         );
 
@@ -47,6 +51,7 @@ class ObjectMediaTest extends TestCase
             'path' => $file->hashName(), // because stored in root of disk
             'mime_type' => 'audio/x-m4a',
             'object_id' => $object->id,
+            'caption' => $caption,
         ]);
     }
 
@@ -60,10 +65,13 @@ class ObjectMediaTest extends TestCase
 
         $file = UploadedFile::fake()->image('foo.jpg');
 
+        $caption = fake()->paragraph();
+
         $response = $this
             ->actingAs($user)
             ->postJson("/api/objects/{$object->id}/medias", [
                 'file' => $file,
+                'caption' => $caption,
             ]);
 
         $response->assertStatus(201);
@@ -73,6 +81,7 @@ class ObjectMediaTest extends TestCase
                 'path',
                 'mime_type',
                 'id',
+                'caption',
             ])
         );
 
@@ -82,6 +91,7 @@ class ObjectMediaTest extends TestCase
             'path' => $file->hashName(), // because stored in root of disk
             'mime_type' => 'image/jpeg',
             'object_id' => $object->id,
+            'caption' => $caption,
         ]);
     }
 
@@ -99,6 +109,7 @@ class ObjectMediaTest extends TestCase
             ->actingAs($user)
             ->postJson("/api/objects/{$object->id}/medias", [
                 'file' => $file,
+                'caption' => fake()->paragraph(),
             ]);
 
         $response->assertInvalid(['file']);
@@ -118,6 +129,7 @@ class ObjectMediaTest extends TestCase
             ->actingAs($user)
             ->postJson("/api/objects/{$object->id}/medias", [
                 'file' => $file,
+                'caption' => fake()->paragraph(),
             ]);
 
         $response->assertInvalid(['file']);
@@ -133,7 +145,7 @@ class ObjectMediaTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->postJson("/api/objects/{$object->id}/medias");
+            ->postJson("/api/objects/{$object->id}/medias", ['caption' => fake()->paragraph()]);
 
         $response->assertInvalid(['file']);
     }
@@ -145,9 +157,12 @@ class ObjectMediaTest extends TestCase
         Storage::fake('public');
 
         $file = UploadedFile::fake()->create('foo.m4a', 0, 'audio/x-m4a');
+        $caption = fake()->paragraph();
 
         $response = $this->postJson("/api/objects/{$object->id}/medias", [
             'file' => $file,
+            'caption' => $caption,
+
         ]);
 
         $response->assertUnauthorized();
@@ -162,11 +177,13 @@ class ObjectMediaTest extends TestCase
         Storage::fake('public');
 
         $file = UploadedFile::fake()->create('foo.m4a', 0, 'audio/x-m4a');
+        $caption = fake()->paragraph();
 
         $response = $this
             ->actingAs(User::factory()->create())
             ->postJson("/api/objects/{$object->id}/medias", [
                 'file' => $file,
+                'caption' => $caption,
             ]);
 
         $response->assertForbidden();
@@ -181,11 +198,13 @@ class ObjectMediaTest extends TestCase
         Storage::fake('public');
 
         $file = UploadedFile::fake()->create('foo.m4a', 0, 'audio/x-m4a');
+        $caption = fake()->paragraph();
 
         $response = $this
             ->actingAs(Admin::factory()->create(), 'admin')
             ->postJson("/api/objects/{$object->id}/medias", [
                 'file' => $file,
+                'caption' => $caption,
             ]);
 
         $response->assertStatus(201);
@@ -195,6 +214,7 @@ class ObjectMediaTest extends TestCase
                 'path',
                 'mime_type',
                 'id',
+                'caption',
             ])
         );
 
@@ -204,6 +224,7 @@ class ObjectMediaTest extends TestCase
             'path' => $file->hashName(), // because stored in root of disk
             'mime_type' => 'audio/x-m4a',
             'object_id' => $object->id,
+            'caption' => $caption,
         ]);
     }
 
@@ -263,6 +284,7 @@ class ObjectMediaTest extends TestCase
             ->actingAs(Admin::factory()->create(), 'admin')
             ->postJson("/api/objects/{$object->id}/medias", [
                 'file' => $file,
+                'caption' => fake()->paragraph(),
             ]);
 
         $this->assertEquals(

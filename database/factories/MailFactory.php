@@ -21,6 +21,7 @@ class MailFactory extends Factory
             'to' => [fake()->email()],
             'subject' => fake()->sentence(),
             'message' => fake()->paragraph(),
+            'location' => fake()->city(),
         ];
     }
 }

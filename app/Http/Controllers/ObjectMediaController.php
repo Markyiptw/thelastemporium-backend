@@ -15,13 +15,14 @@ class ObjectMediaController extends Controller
 
         $fiveMbInKb = 5 * 1024;
 
-        $request->validate([
+        $validated = $request->validate([
             'file' => [
                 "file",
                 "max:{$fiveMbInKb}",
                 "mimetypes:audio/x-m4a,image/jpeg,image/png", // https://stackoverflow.com/questions/71265563/how-to-show-spinner-while-safari-is-converting-heic-to-jpeg-via-input-type-file
                 "required",
             ],
+            'caption' => ['required', 'string'],
         ]);
 
         $file = $request->file('file');
@@ -31,6 +32,7 @@ class ObjectMediaController extends Controller
         $media = $object->medias()->create([
             'path' => $path,
             'mime_type' => $file->getMimeType(),
+            'caption' => $validated['caption'],
         ]);
 
         return new MediaResource($media);
