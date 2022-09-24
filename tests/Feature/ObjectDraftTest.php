@@ -35,6 +35,7 @@ class ObjectDraftTest extends TestCase
                 ->whereJsonContains('to', $data['to'])
                 ->whereJsonContains('cc', $data['cc'])
                 ->where('message', $data['message'])
+                ->where('subject', $data['subject'])
                 ->where('name', $data['name'])
                 ->exists()
         );
@@ -107,6 +108,7 @@ class ObjectDraftTest extends TestCase
                 ->whereJsonContains('to', $data['to'])
                 ->whereJsonContains('cc', $data['cc'])
                 ->where('message', $data['message'])
+                ->where('subject', $data['subject'])
                 ->where('name', $data['name'])
                 ->exists()
         );
@@ -232,7 +234,7 @@ class ObjectDraftTest extends TestCase
         );
     }
 
-    public function test_mail_not_belongs_to_object_return_not_found()
+    public function test_draft_not_belongs_to_object_return_not_found()
     {
         $object = Obj::factory()->for(User::factory())->create();
         $draft = Draft::factory()->for(Obj::factory()->for(User::factory()), 'object')->create();
@@ -289,4 +291,116 @@ class ObjectDraftTest extends TestCase
         $response->assertForbidden();
     }
 
+    public function test_users_can_edit_draft_for_their_object()
+    {
+        $user = User::factory()->create();
+
+        $obj = Obj::factory()->for($user)->create();
+
+        $draft = Draft::factory()
+            ->for($obj, 'object')
+            ->create();
+
+        $data = Draft::factory()->make()->toArray();
+
+        $response = $this
+            ->actingAs($user, 'sanctum')
+            ->patch("/api/objects/{$obj->id}/drafts/{$draft->id}", $data);
+
+        $response->assertStatus(200);
+
+        $response->assertJson(
+            array_merge($data, ['id' => $draft->id])
+        );
+
+        $this->assertTrue(
+            DB::table('drafts')
+                ->whereJsonContains('to', $data['to'])
+                ->whereJsonContains('cc', $data['cc'])
+                ->where('message', $data['message'])
+                ->where('subject', $data['subject'])
+                ->where('subject', $data['subject'])
+                ->where('name', $data['name'])
+                ->where('id', $draft->id)
+                ->exists()
+        );
+    }
+
+    public function test_editing_draft_not_belongs_to_object_return_not_found()
+    {
+        $object = Obj::factory()->for(User::factory())->create();
+        $draft = Draft::factory()->for(Obj::factory()->for(User::factory()), 'object')->create();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->patchJson("/api/objects/{$object->id}/draft/{$draft->id}");
+
+        $response->assertNotFound();
+    }
+
+    public function test_guests_cannot_edit_draft()
+    {
+        $obj = Obj::factory()->for(User::factory()->create())->create();
+
+        $draft = Draft::factory()
+            ->for($obj, 'object')
+            ->create();
+
+        $data = Draft::factory()->make()->toArray();
+
+        $response = $this
+            ->patchJson("/api/objects/{$obj->id}/drafts/{$draft->id}", $data);
+
+        $response->assertUnauthorized();
+    }
+
+    public function test_admins_can_edit_any_draft()
+    {
+        $obj = Obj::factory()->for(User::factory()->create())->create();
+
+        $draft = Draft::factory()
+            ->for($obj, 'object')
+            ->create();
+
+        $data = Draft::factory()->make()->toArray();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create(), 'sanctum')
+            ->patch("/api/objects/{$obj->id}/drafts/{$draft->id}", $data);
+
+        $response->assertStatus(200);
+
+        $response->assertJson(
+            array_merge($data, ['id' => $draft->id])
+        );
+
+        $this->assertTrue(
+            DB::table('drafts')
+                ->whereJsonContains('to', $data['to'])
+                ->whereJsonContains('cc', $data['cc'])
+                ->where('message', $data['message'])
+                ->where('subject', $data['subject'])
+                ->where('subject', $data['subject'])
+                ->where('name', $data['name'])
+                ->where('id', $draft->id)
+                ->exists()
+        );
+    }
+
+    public function test_user_cannot_edit_drafts_not_belongs_to_them()
+    {
+        $obj = Obj::factory()->for(User::factory()->create())->create();
+
+        $draft = Draft::factory()
+            ->for($obj, 'object')
+            ->create();
+
+        $data = Draft::factory()->make()->toArray();
+
+        $response = $this
+            ->actingAs(User::factory()->create())
+            ->patchJson("/api/objects/{$obj->id}/drafts/{$draft->id}", $data);
+
+        $response->assertForbidden();
+    }
 }

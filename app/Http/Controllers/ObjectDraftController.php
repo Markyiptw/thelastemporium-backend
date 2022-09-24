@@ -40,4 +40,21 @@ class ObjectDraftController extends Controller
         return new DraftResource($draft);
     }
 
+    public function update(Obj $object, Draft $draft, Request $request)
+    {
+        $validated = $request->validate([
+            'to' => ['nullable', 'array'],
+            'to.*' => ['required', 'email'],
+            'cc' => ['nullable', 'array'],
+            'cc.*' => ['required', 'email'],
+            'subject' => ['nullable', 'string'],
+            'message' => ['nullable', 'string'],
+            'name' => ['required', 'string'],
+        ]);
+
+        $draft->update($validated);
+
+        return new DraftResource($draft);
+    }
+
 }
