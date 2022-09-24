@@ -17,6 +17,12 @@ class DraftFactory extends Factory
      */
     public function definition()
     {
-        return array_merge(App::make(MailFactory::class)->definition(), ['name' => fake()->name()]);
+        return [
+            'name' => fake()->name(),
+            'cc' => [fake()->email()],
+            'to' => [fake()->email()],
+            'subject' => fake()->sentence(),
+            'message' => fake()->paragraph(),
+        ];
     }
 }

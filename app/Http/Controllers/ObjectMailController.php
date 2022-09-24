@@ -20,6 +20,7 @@ class ObjectMailController extends Controller
             'cc.*' => ['required', 'email'],
             'subject' => ['required', 'string'],
             'message' => ['required', 'string'],
+            'location' => ['required', 'string'],
         ]);
 
         $mail = Facades\Mail::to($validated['to']);

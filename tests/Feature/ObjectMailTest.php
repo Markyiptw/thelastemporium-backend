@@ -48,6 +48,7 @@ class ObjectMailTest extends TestCase
                 ->whereJsonContains('cc', $data['cc'])
                 ->where('subject', $data['subject'])
                 ->where('message', $data['message'])
+                ->where('location', $data['location'])
                 ->exists()
         );
     }
@@ -82,6 +83,7 @@ class ObjectMailTest extends TestCase
                 ->whereNull('cc')
                 ->where('subject', $data['subject'])
                 ->where('message', $data['message'])
+                ->where('location', $data['location'])
                 ->exists()
         );
     }
@@ -117,6 +119,7 @@ class ObjectMailTest extends TestCase
                 ->whereJsonContains('cc', $data['cc'])
                 ->where('subject', $data['subject'])
                 ->where('message', $data['message'])
+                ->where('location', $data['location'])
                 ->exists()
         );
     }
@@ -180,6 +183,7 @@ class ObjectMailTest extends TestCase
                 ->whereJsonContains('to', $data['to'])
                 ->whereJsonContains('cc', $data['cc'])
                 ->where('message', $data['message'])
+                ->where('location', $data['location'])
                 ->where('subject', $data['subject'])
                 ->exists()
         );

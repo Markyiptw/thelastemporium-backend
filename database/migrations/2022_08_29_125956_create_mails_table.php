@@ -19,6 +19,7 @@ return new class extends Migration
             $table->json('cc')->nullable();
             $table->string('subject');
             $table->text('message');
+            $table->string('location');
             $table->foreignId('object_id')->constrained();
             $table->timestamps();
         });

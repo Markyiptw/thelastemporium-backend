@@ -20,6 +20,7 @@ class MailResource extends JsonResource
             'cc' => $this->cc,
             'subject' => $this->subject,
             'message' => $this->message,
+            'location' => $this->location,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
