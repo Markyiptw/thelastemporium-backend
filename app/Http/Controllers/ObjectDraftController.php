@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\DraftResource;
+use App\Models\Draft;
 use App\Models\Obj;
 use Illuminate\Http\Request;
 
@@ -22,6 +23,20 @@ class ObjectDraftController extends Controller
 
         $draft = $object->drafts()->create($validated);
 
+        return new DraftResource($draft);
+    }
+
+    public function index(Obj $object)
+    {
+        return DraftResource::collection(
+            $object
+                ->drafts()
+                ->paginate()
+        );
+    }
+
+    public function show(Obj $object, Draft $draft)
+    {
         return new DraftResource($draft);
     }
 
