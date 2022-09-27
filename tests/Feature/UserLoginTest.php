@@ -15,7 +15,7 @@ class UserLoginTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->postJson('/login', [
-            'email' => $user->email,
+            'username' => $user->username,
             'password' => 'password',
         ]);
 
@@ -26,11 +26,11 @@ class UserLoginTest extends TestCase
     public function test_handle_wrong_credentials()
     {
         $response = $this->postJson('/login', [
-            'email' => fake()->email(),
+            'username' => fake()->userName(),
             'password' => 'wrong_password',
         ]);
 
-        $response->assertInvalid(['email']);
+        $response->assertInvalid(['username']);
 
         $this->assertGuest();
     }
