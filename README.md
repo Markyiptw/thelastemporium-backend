@@ -47,7 +47,7 @@
     ```
 9. Create admin account
     ```
-    ./vendor/bin/sail artisan create:admin {name} {email} {password}
+    ./vendor/bin/sail artisan create:admin {username} {password}
     ```
 
 # Example Frontend Integration
@@ -130,6 +130,7 @@ Note: have to first clear cookie if previously logged in to admin
 ```
 
 ---
+
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

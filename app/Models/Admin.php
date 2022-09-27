@@ -10,8 +10,7 @@ class Admin extends User
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'email',
+        'username',
         'password',
     ];
 }

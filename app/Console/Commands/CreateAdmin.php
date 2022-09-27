@@ -13,7 +13,7 @@ class CreateAdmin extends Command
      *
      * @var string
      */
-    protected $signature = 'create:admin {name} {email} {password}';
+    protected $signature = 'create:admin {username} {password}';
 
     /**
      * The console command description.
@@ -30,8 +30,7 @@ class CreateAdmin extends Command
     public function handle()
     {
         Admin::create([
-            'name' => $this->argument('name'),
-            'email' => $this->argument('email'),
+            'username' => $this->argument('username'),
             'password' => Hash::make($this->argument('password')),
         ]);
     }
