@@ -15,7 +15,7 @@ class AdminLoginTest extends TestCase
         $admin = Admin::factory()->create();
 
         $response = $this->postJson('/admin/login', [
-            'email' => $admin->email,
+            'username' => $admin->username,
             'password' => 'password',
         ]);
 
@@ -26,11 +26,11 @@ class AdminLoginTest extends TestCase
     public function test_handle_wrong_credentials()
     {
         $response = $this->postJson('/admin/login', [
-            'email' => fake()->email(),
+            'username' => fake()->userName(),
             'password' => 'wrong_password',
         ]);
 
-        $response->assertInvalid(['email']);
+        $response->assertInvalid(['username']);
 
         $this->assertGuest();
     }

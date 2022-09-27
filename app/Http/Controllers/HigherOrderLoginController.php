@@ -12,8 +12,8 @@ class HigherOrderLoginController extends Controller
     {
         return function (Request $request) use ($guard) {
             $credentials = $request->validate([
-                'email' => ['required', 'email'],
-                'password' => ['required'],
+                'username' => ['required', 'string'],
+                'password' => ['required', 'string'],
             ]);
 
             if (Auth::guard($guard)->attempt($credentials)) {
@@ -23,7 +23,7 @@ class HigherOrderLoginController extends Controller
             }
 
             throw ValidationException::withMessages([
-                'email' => 'The provided credentials do not match our records.',
+                'username' => 'The provided credentials do not match our records.',
             ]);
         };
     }
