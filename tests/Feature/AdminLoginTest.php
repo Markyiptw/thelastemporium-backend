@@ -45,4 +45,20 @@ class AdminLoginTest extends TestCase
 
         $response->assertForbidden();
     }
+
+    public function test_repeated_login_throw_error_message()
+    {
+        $admin = Admin::factory()->create();
+
+        $response = $this
+            ->actingAs($admin, 'admin')
+            ->postJson('/admin/login', [
+                'username' => $admin->username,
+                'password' => 'password',
+            ]);
+
+        $response->assertForbidden();
+
+        $response->assertJson(['message' => "Already authenticated as {$admin->username}, subsequent logins are not allowed."]);
+    }
 }

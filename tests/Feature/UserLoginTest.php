@@ -45,4 +45,20 @@ class UserLoginTest extends TestCase
 
         $response->assertForbidden();
     }
+
+    public function test_repeated_login_throw_error_message()
+    {
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->postJson('/login', [
+                'username' => $user->username,
+                'password' => 'password',
+            ]);
+
+        $response->assertForbidden();
+
+        $response->assertJson(['message' => "Already authenticated as {$user->username}, subsequent logins are not allowed."]);
+    }
 }
