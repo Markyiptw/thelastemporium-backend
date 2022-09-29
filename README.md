@@ -68,7 +68,7 @@ axios.defaults.baseURL = "http://localhost";
     await axios.get("/sanctum/csrf-cookie");
     await axios.post("/admin/login", {
         // those created with step 8 above
-        email,
+        username,
         password,
     });
     await axios.get("/api/admin"); // will return the authenticated admin if previous steps done correctly
@@ -84,7 +84,7 @@ Note: have to first clear cookie if previously logged in to admin
     await axios.get("/sanctum/csrf-cookie");
     await axios.post("/login", {
         // can be created with admin account, see later sections
-        email,
+        username,
         password,
     });
     await axios.get("/api/user"); // will return the authenticated user if previous steps done correctly
