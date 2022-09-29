@@ -14,7 +14,7 @@ class Draft extends Model
         'cc' => 'array',
     ];
 
-    protected $fillable = ['to', 'cc', 'subject', 'message', 'name'];
+    protected $fillable = ['from', 'to', 'cc', 'message', 'location'];
 
     public function object()
     {

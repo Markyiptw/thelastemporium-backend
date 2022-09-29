@@ -10,16 +10,17 @@ use Illuminate\Support\Facades\App;
 
 class ObjectDraftController extends Controller
 {
+
     public function store(Obj $object, Request $request)
     {
         $validated = $request->validate([
+            'from' => ['required', 'string'],
             'to' => ['nullable', 'array'],
             'to.*' => ['required', 'email'],
             'cc' => ['nullable', 'array'],
             'cc.*' => ['required', 'email'],
-            'subject' => ['nullable', 'string'],
-            'message' => ['nullable', 'string'],
-            'name' => ['required', 'string'],
+            'message' => ['required', 'string'],
+            'location' => ['required', 'string'],
         ]);
 
         $draft = $object->drafts()->create($validated);
@@ -44,13 +45,13 @@ class ObjectDraftController extends Controller
     public function update(Obj $object, Draft $draft, Request $request)
     {
         $validated = $request->validate([
+            'from' => ['required', 'string'],
             'to' => ['nullable', 'array'],
             'to.*' => ['required', 'email'],
             'cc' => ['nullable', 'array'],
             'cc.*' => ['required', 'email'],
-            'subject' => ['nullable', 'string'],
-            'message' => ['nullable', 'string'],
-            'name' => ['required', 'string'],
+            'message' => ['required', 'string'],
+            'location' => ['required', 'string'],
         ]);
 
         $draft->update($validated);

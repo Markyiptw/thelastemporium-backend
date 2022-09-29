@@ -35,22 +35,22 @@ class ObjectDraftTest extends TestCase
 
         $this->assertTrue(
             DB::table('drafts')
+                ->where('from', $data['from'])
                 ->whereJsonContains('to', $data['to'])
                 ->whereJsonContains('cc', $data['cc'])
                 ->where('message', $data['message'])
-                ->where('subject', $data['subject'])
-                ->where('name', $data['name'])
+                ->where('location', $data['location'])
                 ->exists()
         );
     }
 
-    public function test_only_name_is_required()
+    public function test_to_is_optional()
     {
         $user = User::factory()->create();
 
         $obj = Obj::factory()->for($user)->create();
 
-        $data = Draft::factory()->make()->only(['name']);
+        $data = collect(Draft::factory()->make()->toArray())->except(['to'])->all();
 
         $response = $this
             ->actingAs($user, 'sanctum')
@@ -62,7 +62,11 @@ class ObjectDraftTest extends TestCase
 
         $this->assertTrue(
             DB::table('drafts')
-                ->where('name', $data['name'])
+                ->where('from', $data['from'])
+                ->whereNull('to')
+                ->whereJsonContains('cc', $data['cc'])
+                ->where('message', $data['message'])
+                ->where('location', $data['location'])
                 ->exists()
         );
     }
@@ -108,11 +112,11 @@ class ObjectDraftTest extends TestCase
 
         $this->assertTrue(
             DB::table('drafts')
+                ->where('from', $data['from'])
                 ->whereJsonContains('to', $data['to'])
                 ->whereJsonContains('cc', $data['cc'])
                 ->where('message', $data['message'])
-                ->where('subject', $data['subject'])
-                ->where('name', $data['name'])
+                ->where('location', $data['location'])
                 ->exists()
         );
     }
@@ -133,13 +137,13 @@ class ObjectDraftTest extends TestCase
 
         $response->assertJson([
             'data' => [
-                $draft->only([
-                    'to',
-                    'cc',
-                    'message',
-                    'id',
-                    'name',
-                ]),
+                collect($draft)
+                    ->except([
+                        'created_at',
+                        'updated_at',
+                        'object_id',
+                    ])
+                    ->all(),
             ],
         ]);
     }
@@ -203,13 +207,13 @@ class ObjectDraftTest extends TestCase
 
         $response->assertJson([
             'data' => [
-                $draft->only([
-                    'to',
-                    'cc',
-                    'message',
-                    'id',
-                    'name',
-                ]),
+                collect($draft)
+                    ->except([
+                        'created_at',
+                        'updated_at',
+                        'object_id',
+                    ])
+                    ->all(),
             ],
         ]);
     }
@@ -227,13 +231,13 @@ class ObjectDraftTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertJson(
-            $draft->only([
-                'to',
-                'cc',
-                'message',
-                'id',
-                'name',
-            ]),
+            collect($draft)
+                ->except([
+                    'created_at',
+                    'updated_at',
+                    'object_id',
+                ])
+                ->all(),
         );
     }
 
@@ -272,13 +276,13 @@ class ObjectDraftTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertJson(
-            $draft->only([
-                'to',
-                'cc',
-                'message',
-                'id',
-                'name',
-            ]),
+            collect($draft)
+                ->except([
+                    'created_at',
+                    'updated_at',
+                    'object_id',
+                ])
+                ->all(),
         );
     }
 
@@ -318,13 +322,11 @@ class ObjectDraftTest extends TestCase
 
         $this->assertTrue(
             DB::table('drafts')
+                ->where('from', $data['from'])
                 ->whereJsonContains('to', $data['to'])
                 ->whereJsonContains('cc', $data['cc'])
                 ->where('message', $data['message'])
-                ->where('subject', $data['subject'])
-                ->where('subject', $data['subject'])
-                ->where('name', $data['name'])
-                ->where('id', $draft->id)
+                ->where('location', $data['location'])
                 ->exists()
         );
     }
@@ -379,13 +381,11 @@ class ObjectDraftTest extends TestCase
 
         $this->assertTrue(
             DB::table('drafts')
+                ->where('from', $data['from'])
                 ->whereJsonContains('to', $data['to'])
                 ->whereJsonContains('cc', $data['cc'])
                 ->where('message', $data['message'])
-                ->where('subject', $data['subject'])
-                ->where('subject', $data['subject'])
-                ->where('name', $data['name'])
-                ->where('id', $draft->id)
+                ->where('location', $data['location'])
                 ->exists()
         );
     }
@@ -513,6 +513,7 @@ class ObjectDraftTest extends TestCase
                 ->whereJsonContains('cc', $data['cc'])
                 ->where('subject', $data['subject'])
                 ->where('message', $data['message'])
+                ->where('location', $data['location'])
                 ->exists()
         );
 

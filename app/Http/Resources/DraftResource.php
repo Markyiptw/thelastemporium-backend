@@ -16,11 +16,11 @@ class DraftResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'from' => $this->from,
             'to' => $this->to,
             'cc' => $this->cc,
-            'name' => $this->name,
-            'subject' => $this->subject,
             'message' => $this->message,
+            'location' => $this->location,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

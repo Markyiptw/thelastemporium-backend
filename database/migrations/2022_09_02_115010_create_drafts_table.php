@@ -15,12 +15,12 @@ return new class extends Migration
     {
         Schema::create('drafts', function (Blueprint $table) {
             $table->id();
+            $table->string('from');
             $table->json('to')->nullable();
             $table->json('cc')->nullable();
-            $table->string('subject')->nullable();
-            $table->text('message')->nullable();
+            $table->text('message');
+            $table->string('location');
             $table->foreignId('object_id')->constrained();
-            $table->string('name');
             $table->timestamps();
         });
     }

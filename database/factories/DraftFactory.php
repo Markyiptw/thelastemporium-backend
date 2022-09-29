@@ -18,11 +18,11 @@ class DraftFactory extends Factory
     public function definition()
     {
         return [
-            'name' => fake()->name(),
-            'cc' => [fake()->email()],
+            'from' => fake()->name(),
             'to' => [fake()->email()],
-            'subject' => fake()->sentence(),
+            'cc' => [fake()->email()],
             'message' => fake()->paragraph(),
+            'location' => fake()->city(),
         ];
     }
 }
