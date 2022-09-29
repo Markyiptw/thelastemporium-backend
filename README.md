@@ -101,9 +101,7 @@ Note: have to first clear cookie if previously logged in to admin
     const response = await axios.post("/api/objects", {
         name: "obj0", // name of object
         user: {
-            name: "usr0", // name of user,
-            // for login
-            email: "foo@example.com",
+            username: "foo@example.com",
             password: "password",
         },
     });

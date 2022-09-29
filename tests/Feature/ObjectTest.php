@@ -35,11 +35,7 @@ class ObjectTest extends TestCase
 
         $data['user'] = User::factory()
             ->make(['password' => Str::random()])
-            ->only([
-                'name',
-                'email',
-                'password',
-            ]);
+            ->only(['username', 'password']);
 
         $response = $this
             ->actingAs(Admin::factory()->create())
@@ -49,8 +45,7 @@ class ObjectTest extends TestCase
         $response->assertJson($data);
 
         $this->assertDatabaseHas('users', [
-            'name' => $data['user']['name'],
-            'email' => $data['user']['email'],
+            'username' => $data['user']['username'],
             // hashed password not easy to check, skip it
         ]);
 
