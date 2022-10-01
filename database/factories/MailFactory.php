@@ -17,10 +17,10 @@ class MailFactory extends Factory
     public function definition()
     {
         return [
-            'from' => fake()->name(),
+            'from' => "Yours,\n" . fake()->name(),
             'to' => [fake()->email()],
             'cc' => [fake()->email()],
-            'message' => fake()->paragraph(),
+            'message' => fake()->name() . ",\n\n" . fake()->paragraph(),
             'location' => fake()->city(),
         ];
     }

@@ -22,7 +22,7 @@ class ObjectMailTest extends TestCase
 
         $obj = Obj::factory()->for($user)->create();
 
-        Mail::fake();
+        // Mail::fake();
 
         $data = Models\Mail::factory()->make()->toArray();
 

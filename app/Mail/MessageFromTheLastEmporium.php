@@ -19,7 +19,7 @@ class MessageFromTheLastEmporium extends Mailable
      */
     public function __construct($message, $from, $location, $timestamp)
     {
-        $this->fields['message'] = $message;
+        $this->fields['messageText'] = $message;
         $this->fields['from'] = $from;
         $this->fields['location'] = $location;
         $this->fields['timestamp'] = $timestamp;
@@ -32,12 +32,12 @@ class MessageFromTheLastEmporium extends Mailable
      */
     public function build()
     {
-        $subject = str($this->fields['from'])->explode("\n")->map(fn ($line) => trim($line))->join(' ') .
+        $subject = str($this->fields['from'])->explode("\n")->map(fn($line) => trim($line))->join(' ') .
             " from The Last Emporium, {$this->fields['location']}, {$this->fields['timestamp']->isoFormat('D MMM YYYY')}";
 
         return $this
             ->subject($subject)
-            ->markdown('emails.message-from-the-last-emporium')
+            ->view('emails.message-from-the-last-emporium')
             ->with($this->fields);
     }
 }
