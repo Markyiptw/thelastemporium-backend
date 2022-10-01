@@ -33,7 +33,7 @@ class MessageFromTheLastEmporium extends Mailable
     public function build()
     {
         $subject = str($this->fields['from'])->explode("\n")->map(fn ($line) => trim($line))->join(' ') .
-            " from The Last Emporium, {$this->fields['location']}, {$this->fields['timestamp']->isoFormat('Do MMM YYYY')}";
+            " from The Last Emporium, {$this->fields['location']}, {$this->fields['timestamp']->isoFormat('D MMM YYYY')}";
 
         return $this
             ->subject($subject)
