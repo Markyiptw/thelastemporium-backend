@@ -432,17 +432,16 @@ class ObjectDraftTest extends TestCase
         Mail::assertSent(function (MessageFromTheLastEmporium $mail) use ($data) {
             return $mail->message = $data['message'] &&
             $mail->hasTo($data['to']) &&
-            $mail->hasCc($data['cc']) &&
-            $mail->hasSubject($data['subject'])
-            ;
+            $mail->hasCc($data['cc']);
         });
 
         $this->assertTrue(
             DB::table('mails')
+                ->where('from', $data['from'])
                 ->whereJsonContains('to', $data['to'])
                 ->whereJsonContains('cc', $data['cc'])
-                ->where('subject', $data['subject'])
                 ->where('message', $data['message'])
+                ->where('location', $data['location'])
                 ->exists()
         );
 
@@ -502,16 +501,14 @@ class ObjectDraftTest extends TestCase
         Mail::assertSent(function (MessageFromTheLastEmporium $mail) use ($data) {
             return $mail->message = $data['message'] &&
             $mail->hasTo($data['to']) &&
-            $mail->hasCc($data['cc']) &&
-            $mail->hasSubject($data['subject'])
-            ;
+            $mail->hasCc($data['cc']);
         });
 
         $this->assertTrue(
             DB::table('mails')
+                ->where('from', $data['from'])
                 ->whereJsonContains('to', $data['to'])
                 ->whereJsonContains('cc', $data['cc'])
-                ->where('subject', $data['subject'])
                 ->where('message', $data['message'])
                 ->where('location', $data['location'])
                 ->exists()
@@ -551,7 +548,12 @@ class ObjectDraftTest extends TestCase
             ->actingAs(Admin::factory()->create())
             ->postJson("/api/objects/{$obj->id}/drafts/{$draft->id}/send");
 
-        $response->assertInvalid(['to', 'subject', 'message']);
+        $response->assertInvalid([
+            'from',
+            'to',
+            'message',
+            'location',
+        ]);
     }
 
     public function test_admin_can_delete_drafts()
