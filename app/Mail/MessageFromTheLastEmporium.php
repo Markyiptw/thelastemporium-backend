@@ -10,10 +10,7 @@ class MessageFromTheLastEmporium extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $message;
-    public $from;
-    public $location;
-    public $timestamp;
+    private $fields;
 
     /**
      * Create a new message instance.
@@ -22,10 +19,10 @@ class MessageFromTheLastEmporium extends Mailable
      */
     public function __construct($message, $from, $location, $timestamp)
     {
-        $this->message = $message;
-        $this->from = $from;
-        $this->location = $location;
-        $this->timestamp = $timestamp;
+        $this->fields['message'] = $message;
+        $this->fields['from'] = $from;
+        $this->fields['location'] = $location;
+        $this->fields['timestamp'] = $timestamp;
     }
 
     /**
@@ -35,11 +32,12 @@ class MessageFromTheLastEmporium extends Mailable
      */
     public function build()
     {
+        $subject = str($this->fields['from'])->explode("\n")->map(fn ($line) => trim($line))->join(' ') .
+            " from The Last Emporium, {$this->fields['location']}, {$this->fields['timestamp']->isoFormat('Do MMM YYYY')}";
+
         return $this
+            ->subject($subject)
             ->markdown('emails.message-from-the-last-emporium')
-            ->message($this->message)
-            ->with([
-                'messageText' => $this->message, // the variable name 'message' conflicts with blade hint.
-            ]);
+            ->with($this->fields);
     }
 }
