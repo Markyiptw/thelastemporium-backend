@@ -1,6 +1,6 @@
 @component('mail::message')
- {{ $messageText }}
- {{ $from }}
- {{ $timestamp }}
- {{ $location }}
+{{ $messasge }}
+{{ $from }}
+{{ $timestamp }}
+{{ $location }}
 @endcomponent
