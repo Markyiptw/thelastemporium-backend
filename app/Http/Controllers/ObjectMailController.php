@@ -23,15 +23,25 @@ class ObjectMailController extends Controller
             'location' => ['required', 'string'],
         ]);
 
+        $timestamp = now();
+
         $mail = Facades\Mail::to($validated['to']);
 
         if (array_key_exists('cc', $validated)) {
             $mail->cc($validated['cc']);
         }
 
-        $mail->send(new MessageFromTheLastEmporium($validated['message'], $validated['from']));
+        $mail->send(new MessageFromTheLastEmporium($validated['message'], $validated['from'], $validated['location'], $timestamp));
 
-        $mail = $object->mails()->create($validated);
+        $mail = $object
+            ->mails()
+            ->create(array_merge(
+                $validated,
+                [
+                    'created_at' => $timestamp,
+                    'updated_at' => $timestamp,
+                ]
+            ));
 
         return new MailResource($mail);
     }

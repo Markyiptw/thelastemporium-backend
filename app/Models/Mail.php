@@ -14,7 +14,9 @@ class Mail extends Model
         'cc' => 'array',
     ];
 
-    protected $fillable = ['from', 'to', 'cc', 'message', 'location'];
+    protected $fillable = ['from', 'to', 'cc', 'message', 'location', 'created_at', 'updated_at'];
+
+    public $timestamps = false;
 
     public function object()
     {
