@@ -18,10 +18,10 @@ class MessageFromTheLastEmporium extends Mailable
      *
      * @return void
      */
-    public function __construct($subject, $message)
+    public function __construct($subject, $from)
     {
         $this->subject = $subject;
-        $this->message = $message;
+        $this->from = $from;
     }
 
     /**

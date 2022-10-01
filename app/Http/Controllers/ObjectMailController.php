@@ -14,11 +14,11 @@ class ObjectMailController extends Controller
     public function store(Obj $object, Request $request)
     {
         $validated = $request->validate([
+            'from' => ['required', 'string'],
             'to' => ['required', 'array', 'min:1'],
             'to.*' => ['required', 'email'],
             'cc' => ['nullable', 'array'],
             'cc.*' => ['required', 'email'],
-            'subject' => ['required', 'string'],
             'message' => ['required', 'string'],
             'location' => ['required', 'string'],
         ]);
@@ -29,7 +29,7 @@ class ObjectMailController extends Controller
             $mail->cc($validated['cc']);
         }
 
-        $mail->send(new MessageFromTheLastEmporium($validated['subject'], $validated['message']));
+        $mail->send(new MessageFromTheLastEmporium($validated['message'], $validated['from']));
 
         $mail = $object->mails()->create($validated);
 

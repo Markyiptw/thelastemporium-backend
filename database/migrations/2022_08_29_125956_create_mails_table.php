@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('mails', function (Blueprint $table) {
             $table->id();
+            $table->string('from');
             $table->json('to');
             $table->json('cc')->nullable();
-            $table->string('subject');
             $table->text('message');
             $table->string('location');
             $table->foreignId('object_id')->constrained();

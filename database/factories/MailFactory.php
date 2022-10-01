@@ -17,9 +17,9 @@ class MailFactory extends Factory
     public function definition()
     {
         return [
-            'cc' => [fake()->email()],
+            'from' => fake()->name(),
             'to' => [fake()->email()],
-            'subject' => fake()->sentence(),
+            'cc' => [fake()->email()],
             'message' => fake()->paragraph(),
             'location' => fake()->city(),
         ];

@@ -37,16 +37,14 @@ class ObjectMailTest extends TestCase
         Mail::assertSent(function (MessageFromTheLastEmporium $mail) use ($data) {
             return $mail->message = $data['message'] &&
             $mail->hasTo($data['to']) &&
-            $mail->hasCc($data['cc']) &&
-            $mail->hasSubject($data['subject'])
-            ;
+            $mail->hasCc($data['cc']);
         });
 
         $this->assertTrue(
             DB::table('mails')
+                ->where('from', $data['from'])
                 ->whereJsonContains('to', $data['to'])
                 ->whereJsonContains('cc', $data['cc'])
-                ->where('subject', $data['subject'])
                 ->where('message', $data['message'])
                 ->where('location', $data['location'])
                 ->exists()
@@ -79,9 +77,9 @@ class ObjectMailTest extends TestCase
 
         $this->assertTrue(
             DB::table('mails')
+                ->where('from', $data['from'])
                 ->whereJsonContains('to', $data['to'])
                 ->whereNull('cc')
-                ->where('subject', $data['subject'])
                 ->where('message', $data['message'])
                 ->where('location', $data['location'])
                 ->exists()
@@ -108,16 +106,14 @@ class ObjectMailTest extends TestCase
 
         Mail::assertSent(function (MessageFromTheLastEmporium $mail) use ($data) {
             return $mail->message = $data['message'] &&
-            $mail->hasTo($data['to']) &&
-            $mail->hasSubject($data['subject'])
-            ;
+            $mail->hasTo($data['to']);
         });
 
         $this->assertTrue(
             DB::table('mails')
+                ->where('from', $data['from'])
                 ->whereJsonContains('to', $data['to'])
                 ->whereJsonContains('cc', $data['cc'])
-                ->where('subject', $data['subject'])
                 ->where('message', $data['message'])
                 ->where('location', $data['location'])
                 ->exists()
@@ -168,10 +164,7 @@ class ObjectMailTest extends TestCase
         Mail::assertSent(function (MessageFromTheLastEmporium $mail) use ($data) {
             return $mail->message = $data['message'] &&
             $mail->hasTo($data['to']) &&
-            $mail->hasCc($data['cc']) &&
-            $mail->hasSubject($data['subject'])
-
-            ;
+            $mail->hasCc($data['cc']);
         });
 
         $response->assertStatus(201);
@@ -180,11 +173,11 @@ class ObjectMailTest extends TestCase
 
         $this->assertTrue(
             DB::table('mails')
+                ->where('from', $data['from'])
                 ->whereJsonContains('to', $data['to'])
                 ->whereJsonContains('cc', $data['cc'])
                 ->where('message', $data['message'])
                 ->where('location', $data['location'])
-                ->where('subject', $data['subject'])
                 ->exists()
         );
     }
@@ -206,11 +199,11 @@ class ObjectMailTest extends TestCase
         $response->assertJson([
             'data' => [
                 $mail->only([
+                    'from',
                     'to',
                     'cc',
                     'message',
-                    'id',
-                    'subject',
+                    'location',
                 ]),
             ],
         ]);
@@ -275,11 +268,11 @@ class ObjectMailTest extends TestCase
         $response->assertJson([
             'data' => [
                 $mail->only([
+                    'from',
                     'to',
                     'cc',
                     'message',
-                    'id',
-                    'subject',
+                    'location',
                 ]),
             ],
         ]);
@@ -299,11 +292,11 @@ class ObjectMailTest extends TestCase
 
         $response->assertJson(
             $mail->only([
+                'from',
                 'to',
                 'cc',
                 'message',
-                'id',
-                'subject',
+                'location',
             ]),
         );
     }
@@ -344,11 +337,11 @@ class ObjectMailTest extends TestCase
 
         $response->assertJson(
             $mail->only([
+                'from',
                 'to',
                 'cc',
                 'message',
-                'id',
-                'subject',
+                'location',
             ]),
         );
     }
