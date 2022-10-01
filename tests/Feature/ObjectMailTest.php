@@ -22,7 +22,7 @@ class ObjectMailTest extends TestCase
 
         $obj = Obj::factory()->for($user)->create();
 
-        // Mail::fake();
+        Mail::fake();
 
         $data = Models\Mail::factory()->make()->toArray();
 
@@ -39,6 +39,33 @@ class ObjectMailTest extends TestCase
             $mail->hasTo($data['to']) &&
             $mail->hasCc($data['cc']);
         });
+
+        $this->assertTrue(
+            DB::table('mails')
+                ->where('from', $data['from'])
+                ->whereJsonContains('to', $data['to'])
+                ->whereJsonContains('cc', $data['cc'])
+                ->where('message', $data['message'])
+                ->where('location', $data['location'])
+                ->exists()
+        );
+    }
+
+    public function test_trigger_actual_email_sending()
+    {
+        $user = User::factory()->create();
+
+        $obj = Obj::factory()->for($user)->create();
+
+        $data = Models\Mail::factory()->make()->toArray();
+
+        $response = $this
+            ->actingAs($user, 'sanctum')
+            ->post("/api/objects/{$obj->id}/mails", $data);
+
+        $response->assertStatus(201);
+
+        $response->assertJson($data);
 
         $this->assertTrue(
             DB::table('mails')
