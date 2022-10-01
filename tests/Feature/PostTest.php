@@ -112,7 +112,7 @@ class PostTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function test_admin_can_create_post_without_created_at()
+    public function test_admin_can_create_post_with_created_at()
     {
         $data = Post::factory()->make()->toArray();
 
@@ -127,11 +127,9 @@ class PostTest extends TestCase
         $this->assertDatabaseHas('posts', $data);
     }
 
-    public function test_admin_can_create_post_with_null_created_at()
+    public function test_admin_can_create_post_without_created_at()
     {
-        $data = Post::factory()->make(['created_at' => null])->toArray();
-
-        $dataWithoutCreatedAt = collect($data)->except('created_at')->all();
+        $data = collect(Post::factory()->make()->toArray())->except(['created_at'])->all();
 
         $response = $this
             ->actingAs(Admin::factory()->create())
@@ -139,10 +137,29 @@ class PostTest extends TestCase
 
         $response
             ->assertStatus(201)
-            ->assertJson($dataWithoutCreatedAt);
+            ->assertJson($data);
 
         $this->assertTrue(
-            Post::where($dataWithoutCreatedAt)
+            Post::where($data)
+                ->whereNotNull('created_at')
+                ->exists()
+        );
+    }
+
+    public function test_admin_can_create_post_with_null_created_at()
+    {
+        $data = Post::factory()->make(['created_at' => null])->toArray();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->postJson("/api/posts", $data);
+
+        $response
+            ->assertStatus(201)
+            ->assertJson(collect($data)->except(['created_at'])->all());
+
+        $this->assertTrue(
+            Post::where(collect($data)->except(['created_at'])->all())
                 ->whereNotNull('created_at')
                 ->exists()
         );
