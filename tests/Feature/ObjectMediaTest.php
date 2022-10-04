@@ -95,6 +95,46 @@ class ObjectMediaTest extends TestCase
         ]);
     }
 
+    public function test_user_can_upload_mp3_to_location()
+    {
+        $user = User::factory()->create();
+
+        $object = Obj::factory()->for($user)->create();
+
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('foo.mp3', 0, 'audio/mpeg');
+
+        $caption = fake()->paragraph();
+
+        $response = $this
+            ->actingAs($user)
+            ->postJson("/api/objects/{$object->id}/medias", [
+                'file' => $file,
+                'caption' => $caption,
+            ]);
+
+        $response->assertStatus(201);
+
+        $response->assertJson(
+            Media::first()->only([
+                'path',
+                'mime_type',
+                'id',
+                'caption',
+            ])
+        );
+
+        Storage::disk('public')->assertExists($file->hashName());
+
+        $this->assertDatabaseHas('medias', [
+            'path' => $file->hashName(), // because stored in root of disk
+            'mime_type' => 'audio/mpeg',
+            'object_id' => $object->id,
+            'caption' => $caption,
+        ]);
+    }
+
     public function test_user_cannot_upload_file_greater_than_5_mb()
     {
         $user = User::factory()->create();
