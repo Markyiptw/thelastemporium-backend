@@ -54,7 +54,7 @@ class PostTest extends TestCase
 
     public function test_posts_are_ordered_by_decending_created_at()
     {
-        $posts = Post::factory()->count(2)->create(); // two post will has the same created at
+        $posts = Post::factory()->count(2)->create(['created_at' => now()]); // two post will has the same created at
 
         $posts[1]->created_at = $posts[1]->created_at->clone()->addSecond();
 
