@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -19,7 +20,7 @@ class HigherOrderLoginController extends Controller
             if (Auth::guard($guard)->attempt($credentials)) {
                 $request->session()->regenerate();
 
-                return response('', 200);
+                return new UserResource(Auth::guard($guard)->user());
             }
 
             throw ValidationException::withMessages([
