@@ -46,8 +46,17 @@
     ./vendor/bin/sail artisan migrate
     ```
 9. Create admin account
+
     ```
     ./vendor/bin/sail artisan create:admin {username} {password}
+    ```
+
+10. [Create public disk symlink](https://laravel.com/docs/9.x/filesystem#the-public-disk)
+
+    Without running this, media links will report 404 not found.
+
+    ```
+    ./vendor/bin/sail artisan storage:link
     ```
 
 # Example Frontend Integration
