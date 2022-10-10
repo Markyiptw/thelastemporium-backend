@@ -18,6 +18,5 @@ class UserTest extends TestCase
         $obj = Obj::factory()->create(['user_id' => $user->id]);
 
         $this->assertTrue($user->refresh()->object->is($obj));
-
     }
 }

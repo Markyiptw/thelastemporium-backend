@@ -28,4 +28,17 @@ class HigherOrderLoginController extends Controller
             ]);
         };
     }
+
+    public function logout($guard)
+    {
+        return function (Request $request) use ($guard) {
+            Auth::guard($guard)->logout();
+
+            $request->session()->invalidate();
+
+            $request->session()->regenerateToken();
+
+            return ['message' => "Logout successful!"];
+        };
+    }
 }

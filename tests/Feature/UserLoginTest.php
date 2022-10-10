@@ -61,4 +61,15 @@ class UserLoginTest extends TestCase
 
         $response->assertJson(['message' => "Already authenticated as {$user->username}, subsequent logins are not allowed."]);
     }
+
+    public function test_user_can_logout()
+    {
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($user, 'web')
+            ->postJson('/api/user/logout');
+
+        $this->assertGuest('web');
+    }
 }

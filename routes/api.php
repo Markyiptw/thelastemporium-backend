@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HigherOrderLoginController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ObjController;
 use App\Http\Controllers\ObjectDraftController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\ObjectMediaController;
 use App\Http\Controllers\PostController;
 use App\Http\Resources\ObjResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -81,4 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('posts', PostController::class)
         ->middleware('admin')
         ->only(['store', 'update', 'destroy']);
+
+    Route::middleware('user')->post('/user/logout', App::make(HigherOrderLoginController::class)->logout('web'));
+    Route::middleware('admin')->post('/admin/logout', App::make(HigherOrderLoginController::class)->logout('admin'));
 });
