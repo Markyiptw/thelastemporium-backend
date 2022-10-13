@@ -13,6 +13,7 @@ class Post extends Model
         'subject',
         'body',
         'from',
+        'location',
         'created_at',
     ];
 }

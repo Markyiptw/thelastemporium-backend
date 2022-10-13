@@ -13,6 +13,7 @@ class PostFactory extends Factory
             'from' => fake()->name(),
             'body' => fake()->paragraph(),
             'subject' => fake()->sentence(),
+            'location' => fake()->city(),
             'created_at' => fake()->datetime(),
         ];
     }

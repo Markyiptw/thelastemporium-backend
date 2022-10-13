@@ -26,6 +26,7 @@ class PostController extends Controller
             'subject' => ['required', 'string'],
             'body' => ['required', 'string'],
             'from' => ['required', 'string'],
+            'location' => ['required', 'string'],
             'created_at' => ['nullable', 'date'],
         ]);
 
@@ -42,6 +43,7 @@ class PostController extends Controller
             'subject' => ['required', 'string'],
             'body' => ['required', 'string'],
             'from' => ['required', 'string'],
+            'location' => ['required', 'string'],
             'created_at' => ['nullable', 'date'],
         ]);
 
