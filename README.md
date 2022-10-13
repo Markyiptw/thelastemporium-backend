@@ -1,3 +1,23 @@
+# Deployment
+
+1. Backup the old folder.
+
+2. Backup the database.
+
+3. Upload the new folder.
+
+4. The followings are git ignored thus need to be copied from the old folder:
+
+-   .env
+-   storage/app/public
+-   composers.phar
+
+5. Run migration
+
+6. Recreate symlink
+
+7. Cache config
+
 # Running Local Dev Server
 
 1. Clone the Repo
