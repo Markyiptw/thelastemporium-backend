@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="background-color: #0A242E; color: #E8DED0;">
-<div style="max-width: 1024px; 	padding-left: 8px; padding-right: 8px; margin-left:auto; margin-right: auto;">
-  <p style="white-space: pre-wrap; font-family: monospace; margin-top: 40px;">{{ $messageText }}</p>
+<div style="max-width: 1024px; 	padding-left: 8px; padding-right: 8px; margin-left:auto; margin-right: auto; padding-top: 40px;">
+  <p style="white-space: pre-wrap; font-family: monospace;">{{ $messageText }}</p>
   <p style="text-align: right; white-space: pre-wrap; font-family: monospace;">{{ $from }}</p>
   <p style="text-align: right; white-space: pre-wrap; font-family: monospace;">{{ $timestamp }}<br>{{ $location }}</p>
   <a href="https://www.thelastemporium.hk" style="display: block; margin-top: 40px; margin-bottom: 40px;">
