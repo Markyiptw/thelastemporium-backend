@@ -12,11 +12,15 @@
 -   storage/app/public
 -   composers.phar
 
-5. Run migration
+5. Run compose install
 
 6. Recreate symlink
 
-7. Cache config
+7. Run migration
+
+8. Cache config
+
+9. Fix permissions
 
 # Running Local Dev Server
 
