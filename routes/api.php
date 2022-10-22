@@ -29,7 +29,7 @@ Route::resource('objects', ObjController::class)->only([
 ]);
 
 Route::resource('medias', MediaController::class)->only([
-    'index',
+    'index'
 ]);
 
 Route::resource('objects/{object}/locations', ObjectLocationController::class)->only([
@@ -55,6 +55,9 @@ Route::middleware('auth:sanctum')->group(function () {
     ]);
     Route::middleware('admin')->resource('objects', ObjController::class)->only([
         'store',
+    ]);
+    Route::middleware('admin')->resource('medias', MediaController::class)->only([
+        'update'
     ]);
     Route::middleware('user')->get('/object', function (Request $request) {
         return new ObjResource($request->user()->object);

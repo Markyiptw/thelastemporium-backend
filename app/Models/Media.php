@@ -16,7 +16,8 @@ class Media extends Model
     protected $fillable = [
         'path',
         'mime_type',
-        'caption'
+        'caption',
+        'created_at'
     ];
 
     protected function path(): Attribute

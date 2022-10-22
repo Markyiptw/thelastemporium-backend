@@ -6,6 +6,7 @@ use App\Models\Admin;
 use App\Models\Media;
 use App\Models\Obj;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -229,7 +230,7 @@ class ObjectMediaTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function test_admin_can_upload_media_to_any_location()
+    public function test_admin_can_upload_media_to_any_object()
     {
         $object = Obj::factory()
             ->for(User::factory())
@@ -329,7 +330,45 @@ class ObjectMediaTest extends TestCase
 
         $this->assertEquals(
             $response['path'],
-            env('APP_URL') . "/storage/{$file->hashName()}"// no real way to test if the file can be retrieved, but this is the url I think could work after studying how the disk works.
+            env('APP_URL') . "/storage/{$file->hashName()}" // no real way to test if the file can be retrieved, but this is the url I think could work after studying how the disk works.
+        );
+    }
+
+    public function test_admin_can_edit_media_caption_and_created_at()
+    {
+        Storage::fake('public', [
+            'url' => env('APP_URL') . '/storage',
+        ]);
+
+        $object = Obj::factory()
+            ->for(User::factory())
+            ->create();
+
+        $mediaId = Media::factory()
+            ->for($object, 'object')
+            ->create()
+            ->id;
+
+        $data = [
+            'caption' => fake()->paragraph(),
+            'created_at' => fake()->iso8601()
+        ];
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->patchJson("/api/medias/$mediaId", $data);
+
+        $response->assertJson(['caption' => $data['caption']]);
+
+        $this->assertTrue((new Carbon($data['created_at']))->equalTo($response['created_at']));
+
+        $this->assertDatabaseHas(
+            'medias',
+            [
+                'id' => $mediaId,
+                'caption' => $data['caption'],
+                'created_at' => (new Carbon($data['created_at']))
+            ]
         );
     }
 }
