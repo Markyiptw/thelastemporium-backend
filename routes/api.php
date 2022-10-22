@@ -61,7 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
         'update', 'destroy'
     ]);
     Route::middleware('admin')->resource('medias', MediaController::class)->only([
-        'update'
+        'update', 'destroy'
     ]);
     Route::middleware('user')->get('/object', function (Request $request) {
         return new ObjResource($request->user()->object);

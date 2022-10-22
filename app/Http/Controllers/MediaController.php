@@ -26,4 +26,11 @@ class MediaController extends Controller
 
         return new MediaResource($media);
     }
+
+
+    public function destroy(Media $media)
+    {
+        $media->delete();
+        return response()->noContent();
+    }
 }

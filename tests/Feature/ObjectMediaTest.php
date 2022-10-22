@@ -371,4 +371,27 @@ class ObjectMediaTest extends TestCase
             ]
         );
     }
+
+    public function test_admin_can_delete_medias()
+    {
+        Storage::fake('public', [
+            'url' => env('APP_URL') . '/storage',
+        ]);
+
+        $object = Obj::factory()
+            ->for(User::factory())
+            ->create();
+
+        $media = Media::factory()
+            ->for($object, 'object')
+            ->create();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->deleteJson("/api/medias/{$media->id}");
+
+        $response->assertStatus(204);
+
+        $this->assertModelMissing($media);
+    }
 }
