@@ -49,7 +49,7 @@ class ObjectMailController extends Controller
     public function index(Obj $object)
     {
         return MailResource::collection(
-            $object->mails()->paginate()
+            $object->mails()->get()
         );
     }
 

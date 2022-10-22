@@ -11,7 +11,7 @@ class ObjectLocationController extends Controller
 {
     public function index(Obj $object)
     {
-        return LocationResource::collection($object->locations()->paginate());
+        return LocationResource::collection($object->locations()->get());
     }
 
     public function store(Request $request, Obj $object)

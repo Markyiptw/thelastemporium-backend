@@ -33,7 +33,7 @@ class ObjectDraftController extends Controller
         return DraftResource::collection(
             $object
                 ->drafts()
-                ->paginate()
+                ->get()
         );
     }
 

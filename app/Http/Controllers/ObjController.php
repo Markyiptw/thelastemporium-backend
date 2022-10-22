@@ -14,7 +14,7 @@ class ObjController extends Controller
     public function index()
     {
         return ObjResource::collection(
-            Obj::paginate()
+            Obj::get()
         );
     }
 
