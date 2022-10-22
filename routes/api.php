@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HigherOrderLoginController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ObjController;
 use App\Http\Controllers\ObjectDraftController;
@@ -55,6 +56,9 @@ Route::middleware('auth:sanctum')->group(function () {
     ]);
     Route::middleware('admin')->resource('objects', ObjController::class)->only([
         'store',
+    ]);
+    Route::middleware('admin')->resource('locations', LocationController::class)->only([
+        'update',
     ]);
     Route::middleware('admin')->resource('medias', MediaController::class)->only([
         'update'

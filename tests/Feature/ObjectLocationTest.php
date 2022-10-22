@@ -6,6 +6,7 @@ use App\Models\Admin;
 use App\Models\Location;
 use App\Models\Obj;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -109,5 +110,30 @@ class ObjectLocationTest extends TestCase
         $this->assertDatabaseHas('locations', $locationData);
     }
 
-    //validation not tested but implemented
+    public function test_admin_can_edit_locations()
+    {
+        $obj = Obj::factory()->for(User::factory())->create();
+
+        $locationId = Location::factory()
+            ->for($obj, 'object')
+            ->create()
+            ->id;
+
+        $data = Location::factory()->make(['created_at' => fake()->iso8601()])->toArray();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->patchJson("/api/locations/$locationId", $data);
+
+        $response->assertStatus(200);
+
+        $response->assertJson(collect($data)->except(['created_at'])->all());
+
+        $this->assertTrue((new Carbon($data['created_at']))->equalTo($response['created_at']));
+
+        $this->assertDatabaseHas(
+            'locations',
+            array_merge($data, ['created_at' => new Carbon($data['created_at'])])
+        );
+    }
 }
