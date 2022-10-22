@@ -136,4 +136,21 @@ class ObjectLocationTest extends TestCase
             array_merge($data, ['created_at' => new Carbon($data['created_at'])])
         );
     }
+
+    public function test_admin_can_delete_locations()
+    {
+        $obj = Obj::factory()->for(User::factory())->create();
+
+        $location = Location::factory()
+            ->for($obj, 'object')
+            ->create();
+
+        $response = $this
+            ->actingAs(Admin::factory()->create())
+            ->deleteJson("/api/locations/{$location->id}");
+
+        $response->assertStatus(204);
+
+        $this->assertModelMissing($location);
+    }
 }

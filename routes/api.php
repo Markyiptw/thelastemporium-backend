@@ -58,7 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
         'store',
     ]);
     Route::middleware('admin')->resource('locations', LocationController::class)->only([
-        'update',
+        'update', 'destroy'
     ]);
     Route::middleware('admin')->resource('medias', MediaController::class)->only([
         'update'

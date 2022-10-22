@@ -20,4 +20,10 @@ class LocationController extends Controller
 
         return new LocationResource($location);
     }
+
+    public function destroy(Location $location)
+    {
+        $location->delete();
+        return response()->noContent();
+    }
 }
