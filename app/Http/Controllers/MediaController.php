@@ -19,8 +19,10 @@ class MediaController extends Controller
     {
         $validated = $request->validate([
             'caption' => ['required', 'string'],
-            'created_at' => ['required', 'date']
+            'created_at' => ['nullable', 'date']
         ]);
+
+        $validated = collect($validated)->filter(fn ($value) => !is_null($value))->all();
 
         $media->update($validated);
 
