@@ -19,7 +19,9 @@ class MediaController extends Controller
     {
         $validated = $request->validate([
             'caption' => ['required', 'string'],
-            'created_at' => ['nullable', 'date']
+            'created_at' => ['nullable', 'date'],
+            'latitude' => ['nullable', 'numeric', 'min:-90', 'max:90'],
+            'longitude' => ['nullable', 'numeric', 'min:-180', 'max:180'],
         ]);
 
         $validated = collect($validated)->filter(fn ($value) => !is_null($value))->all();

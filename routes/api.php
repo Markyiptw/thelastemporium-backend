@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HigherOrderLoginController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ObjController;
 use App\Http\Controllers\ObjectDraftController;
@@ -90,6 +91,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('posts', PostController::class)
         ->middleware('admin')
         ->only(['store', 'update', 'destroy']);
+
+    Route::resource('mails', MailController::class)
+        ->middleware('admin')
+        ->only(['index', 'destroy', 'show']);
 
     Route::middleware('user')->post('/user/logout', App::make(HigherOrderLoginController::class)->logout('web'));
     Route::middleware('admin')->post('/admin/logout', App::make(HigherOrderLoginController::class)->logout('admin'));

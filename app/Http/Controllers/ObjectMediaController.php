@@ -23,17 +23,27 @@ class ObjectMediaController extends Controller
                 "required",
             ],
             'caption' => ['required', 'string'],
+            'latitude' => ['nullable', 'numeric', 'min:-90', 'max:90'],
+            'longitude' => ['nullable', 'numeric', 'min:-180', 'max:180'],
         ]);
 
         $file = $request->file('file');
 
         $path = $file->store(null, 'public'); // relative to disk, i.e. storage/app/public/foo.jpg will just return foo.jpg
 
-        $media = $object->medias()->create([
-            'path' => $path,
-            'mime_type' => $file->getMimeType(),
-            'caption' => $validated['caption'],
-        ]);
+        $media = $object
+            ->medias()
+            ->create(
+                array_merge(
+                    [
+                        'path' => $path,
+                        'mime_type' => $file->getMimeType(),
+                    ],
+                    collect($validated)
+                        ->except(['file'])
+                        ->all()
+                )
+            );
 
         return new MediaResource($media);
     }
