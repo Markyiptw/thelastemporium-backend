@@ -18,6 +18,8 @@ class Media extends Model
         'mime_type',
         'caption',
         'created_at'
+        'latitude',
+        'longitude',
     ];
 
     protected function path(): Attribute
