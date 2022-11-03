@@ -17,7 +17,7 @@ class Media extends Model
         'path',
         'mime_type',
         'caption',
-        'created_at'
+        'created_at',
         'latitude',
         'longitude',
     ];
