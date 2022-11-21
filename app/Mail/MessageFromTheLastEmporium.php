@@ -5,6 +5,7 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Stevebauman\Purify\Facades\Purify;
 
 class MessageFromTheLastEmporium extends Mailable
 {
@@ -22,7 +23,11 @@ class MessageFromTheLastEmporium extends Mailable
         $this->fields['messageText'] = $message;
         $this->fields['from'] = $from;
         $this->fields['location'] = $location;
-        $this->fields['timestamp'] = $timestamp;
+        $this->fields['timestamp'] = $timestamp->isoFormat('D MMM YYYY');
+
+        $this->fields = collect($this->fields)
+            ->map([Purify::class, 'clean'])
+            ->all();
     }
 
     /**
@@ -32,8 +37,8 @@ class MessageFromTheLastEmporium extends Mailable
      */
     public function build()
     {
-        $subject = str($this->fields['from'])->explode("\n")->map(fn($line) => trim($line))->join(' ') .
-            " from The Last Emporium, {$this->fields['location']}, {$this->fields['timestamp']->isoFormat('D MMM YYYY')}";
+        $subject = str($this->fields['from'])->explode("\n")->map(fn ($line) => trim($line))->join(' ') .
+            " from The Last Emporium, {$this->fields['location']}, {$this->fields['timestamp']}";
 
         return $this
             ->subject($subject)

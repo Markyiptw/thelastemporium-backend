@@ -48,9 +48,9 @@
 </head>
 
 <body>
-  <p>{{ $messageText }}</p>
-  <p class="signoff">{{ $from }}</p>
-  <p>{{ $timestamp }}<br>{{ $location }}</p>
+  <p>{!! $messageText !!}</p>
+  <p class="signoff">{!! $from !!}</p>
+  <p>{!! $timestamp !!}<br>{!! $location !!}</p>
   <a href="https://www.thelastemporium.hk">
     <img id="logo_image" src="{{ Storage::disk('public')->url('assets/the-logo.png') }}">
   </a>
